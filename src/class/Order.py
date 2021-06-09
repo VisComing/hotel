@@ -1,5 +1,6 @@
-from class.BaseModel import BaseModel
+from .BaseModel import BaseModel
 from peewee import *
+
 
 class Order(BaseModel):
     userID = TextField()
@@ -8,5 +9,6 @@ class Order(BaseModel):
     createdTime = DateTimeField()
     finishedTime = DateTimeField()
     state = TextField()
+
     class Meta:
-        table_name = 'tbOrder'
+        table_name = "tbOrder"

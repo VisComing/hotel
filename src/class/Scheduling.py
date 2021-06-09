@@ -1,10 +1,14 @@
-from class.BaseModel import BaseModel
+from .BaseModel import BaseModel
 from peewee import *
-from class.Device import Device
+from .Device import Device
+
 
 class Scheduling(BaseModel):
-    roomID = ForeignKeyField(Device, field='roomID', backref='Schedulings', db_column='roomID')
+    roomID = ForeignKeyField(
+        Device, field="roomID", backref="Schedulings", db_column="roomID"
+    )
     time = TextField()
+
     class Meta:
-        primary_key = CompositeKey('roomID', 'time')
-        tbale_name = 'tbScheduling'
+        primary_key = CompositeKey("roomID", "time")
+        tbale_name = "tbScheduling"

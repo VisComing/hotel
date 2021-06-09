@@ -1,10 +1,14 @@
-from class.BaseModel import BaseModel
+from .BaseModel import BaseModel
 from peewee import *
-from class.Order import Order
+from .Order import Order
+
 
 class Bill(BaseModel):
-    orderID = ForeignKeyField(Order, field='orderID', backref='Bills', db_column='orderID')
+    orderID = ForeignKeyField(
+        Order, field="orderID", backref="Bills", db_column="orderID"
+    )
     billID = TextField(primary_key=True)
     totalCost = FloatField()
+
     class Meta:
-        table_name = 'tbBill'
+        table_name = "tbBill"

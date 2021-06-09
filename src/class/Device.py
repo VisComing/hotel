@@ -1,5 +1,7 @@
-from class.BaseModel import BaseModel
+from .BaseModel import BaseModel
 from peewee import *
+
+
 class Device(BaseModel):
     roomID = TextField(primary_key=True)
     isPower = IntegerField()
@@ -9,6 +11,6 @@ class Device(BaseModel):
     isAskAir = IntegerField()
     isSupplyAir = IntegerField()
     cost = FloatField()
-    class Meta:
-        table_name = 'tbDevice'
 
+    class Meta:
+        table_name = "tbDevice"
