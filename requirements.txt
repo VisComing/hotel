@@ -1,0 +1,21 @@
+apply-defaults==0.1.4
+attrs==21.2.0
+certifi==2021.5.30
+chardet==4.0.0
+click==7.1.2
+idna==2.10
+jsonrpcclient==3.3.6
+jsonrpcserver==4.2.0
+jsonschema==3.2.0
+peewee==3.14.4
+pyrsistent==0.17.3
+requests==2.25.1
+six==1.16.0
+urllib3==1.26.5
+websockets==9.1
+# python版本3.8.5
+# 可以手动安装下面的包
+# pip3 install websockets
+# pip3 install jsonrpcserver
+# pip3 install "jsonrpcclient[requests]"
+# pip3 install peewee
