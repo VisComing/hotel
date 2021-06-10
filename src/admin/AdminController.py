@@ -1,5 +1,12 @@
 import logging
-from admin import *
+from src.admin.BillHandler import BillHandler
+from src.admin.DetailedListHandler import DetailedListHandler
+from src.admin.DeviceHandler import DeviceHandler
+from src.admin.OrderHandler import OrderHandler
+from src.admin.StatisticsHandler import StatisticsHandler
+from src.admin.SysConfigHandler import SysConfigHandler
+from src.admin.SystemStatusHandler import SystemStatusHandler
+from src.admin.SysSetHandler import SysSetHandler
 import websockets
 import json
 
@@ -35,25 +42,25 @@ class AdminController:
             else:
                 logging.error("AdminController: rpc failed, no related function")
 
-    def setOrderHandler(self, handler: OrderHandler.OrderHandler):
+    def setOrderHandler(self, handler: OrderHandler):
         self._orderHandle = handler
 
-    def setBillHandler(self, handler: BillHandler.BillHandler):
+    def setBillHandler(self, handler: BillHandler):
         self._billHandler = handler
 
-    def setDetailedListHandler(self, handler: DetailedListHandler.DetailedListHandler):
+    def setDetailedListHandler(self, handler: DetailedListHandler):
         self._detailedListHandler = handler
 
-    def setStatisticsHandler(self, handler: StatisticsHandler.StatisticsHandler):
+    def setStatisticsHandler(self, handler: StatisticsHandler):
         self._statisticsHandler = handler
 
-    def setSystemStatusHandler(self, handler: SystemStatusHandler.SystemStatusHandler):
+    def setSystemStatusHandler(self, handler: SystemStatusHandler):
         self._systemStatusHandler = handler
 
-    def setSysconfigHandler(self, handler: SysConfigHandler.SysConfigHandler):
+    def setSysconfigHandler(self, handler: SysConfigHandler):
         self._sysConfigHandler = handler
 
-    def setSysSetHandler(self, handler: SysSetHandler.SysSetHandler):
+    def setSysSetHandler(self, handler: SysSetHandler):
         self._sysSetHandler = handler
 
     async def serve(self):

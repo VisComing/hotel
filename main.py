@@ -4,18 +4,16 @@ import logging
 # from .admin.AdminController import AdminController
 import asyncio
 
-# from admin.BillHandler import BillHandler
-# from admin.DetailedListHandler import DetailedListHandler
-# from admin.DeviceHandler import DeviceHandler
-# from admin.OrderHandler import OrderHandler
-# from admin.StatisticsHandler import StatisticsHandler
-# from admin.SysConfigHandler import SysConfigHandler
-# from admin.SysSetHandler import SysSetHandler
-# from admin.SystemStatusHandler import SystemStatusHandler
-import importlib
-from src.admin import *
+from src.admin.BillHandler import BillHandler
+from src.admin.DetailedListHandler import DetailedListHandler
+from src.admin.DeviceHandler import DeviceHandler
+from src.admin.OrderHandler import OrderHandler
+from src.admin.StatisticsHandler import StatisticsHandler
+from src.admin.SysConfigHandler import SysConfigHandler
+from src.admin.SysSetHandler import SysSetHandler
+from src.admin.SystemStatusHandler import SystemStatusHandler
+from src.admin.AdminController import AdminController
 
-AdminController = importlib.import_module("admin.AdminController.AdminController")
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
     level=logging.INFO,
