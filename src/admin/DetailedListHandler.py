@@ -3,9 +3,9 @@ from jsonrpcserver.methods import Method
 
 
 class DetailedListHandler:
-    async def run(self):
+    async def run(self) -> None:
         await dispatch(self._message)
 
     @method
-    async def getDetailedList(orderID: str):
-        pass
+    async def getDetailedList(orderID: str) -> dict:
+        return {}

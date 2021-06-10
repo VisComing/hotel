@@ -4,14 +4,15 @@ import asyncio
 
 from src.admin.BillHandler import BillHandler
 from src.admin.DetailedListHandler import DetailedListHandler
-from src.admin.DeviceHandler import DeviceHandler
 from src.admin.OrderHandler import OrderHandler
 from src.admin.StatisticsHandler import StatisticsHandler
 from src.admin.SysConfigHandler import SysConfigHandler
 from src.admin.SysSetHandler import SysSetHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.AdminController import AdminController
+from src.model.Order import Order
 
+print(Order)
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
     level=logging.INFO,

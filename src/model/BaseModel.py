@@ -5,7 +5,7 @@ import peewee_async
 from peewee_async import Manager, MySQLDatabase
 
 db = peewee_async.MySQLDatabase(
-    "hotle",
+    "hotel",
     max_connections=20,
     host="localhost",
     port=3306,

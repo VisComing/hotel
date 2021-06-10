@@ -2,17 +2,17 @@ from jsonrpcserver import method, async_dispatch as dispatch
 
 
 class SystemStatusHandler:
-    async def run(self):
+    async def run(self) -> None:
         await dispatch(self._message)
 
     @method
-    async def getSystemStatus():
-        pass
+    async def getSystemStatus() -> dict:
+        return {}
 
     @method
-    async def startSystem():
-        pass
+    async def startSystem() -> dict:
+        return {}
 
     @method
-    async def stopSystem():
-        pass
+    async def stopSystem() -> dict:
+        return {}

@@ -1,6 +1,6 @@
-from .BaseModel import BaseModel
+from src.model.BaseModel import BaseModel
 from peewee import *
-from .Device import Device
+from src.model.Device import Device
 
 
 class TargetTem(BaseModel):

@@ -1,6 +1,6 @@
-from .BaseModel import BaseModel, database
+from src.model.BaseModel import BaseModel, database
 from peewee import *
-from .Order import Order
+from src.model.Order import Order
 
 
 class Bill(BaseModel):

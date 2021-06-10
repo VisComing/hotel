@@ -1,6 +1,6 @@
-from .BaseModel import BaseModel
+from src.model.BaseModel import BaseModel
 from peewee import *
-from .Order import Order
+from src.model.Order import Order
 
 
 class DetailList(BaseModel):

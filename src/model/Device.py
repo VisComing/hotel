@@ -1,4 +1,4 @@
-from .BaseModel import BaseModel, database
+from src.model.BaseModel import BaseModel, database
 from peewee import *
 
 

@@ -1,7 +1,6 @@
 import logging
 from src.admin.BillHandler import BillHandler
 from src.admin.DetailedListHandler import DetailedListHandler
-from src.admin.DeviceHandler import DeviceHandler
 from src.admin.OrderHandler import OrderHandler
 from src.admin.StatisticsHandler import StatisticsHandler
 from src.admin.SysConfigHandler import SysConfigHandler
@@ -9,38 +8,40 @@ from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.SysSetHandler import SysSetHandler
 import websockets
 import json
-
-# 如何发送消息？定时发送？
-#
+import asyncio
 
 
 class AdminController:
     async def control(self, websocket, path):
-        self._sysSetHandler.run(websocket)
-        async for message in websocket:
-            method = json.loads(message)["method"]
-            if (
-                method == "createOrder"
-                or method == "fetchOrders"
-                or method == "finishOrder"
-            ):
-                await self._orderHandle.run(message)
-            elif method == "getBill":
-                await self._billHandler.run(message)
-            elif method == "getDetailedList":
-                await self._detailedListHandler.run(message)
-            elif method == "getStatistics":
-                await self._statisticsHandler.run(message)
-            elif (
-                method == "getSystemStatus"
-                or method == "startSystem"
-                or method == "stopSystem"
-            ):
-                await self._systemStatusHandler.run(message)
-            elif method == "getSysConfig" or method == "setSysConfig":
-                await self._sysConfigHandler.run(message)
-            else:
-                logging.error("AdminController: rpc failed, no related function")
+        async def recvMessage():
+            async for message in websocket:
+                method = json.loads(message)["method"]
+                if (
+                    method == "createOrder"
+                    or method == "fetchOrders"
+                    or method == "finishOrder"
+                ):
+                    await self._orderHandle.run(message)
+                elif method == "getBill":
+                    await self._billHandler.run(message)
+                elif method == "getDetailedList":
+                    await self._detailedListHandler.run(message)
+                elif method == "getStatistics":
+                    await self._statisticsHandler.run(message)
+                elif (
+                    method == "getSystemStatus"
+                    or method == "startSystem"
+                    or method == "stopSystem"
+                ):
+                    await self._systemStatusHandler.run(message)
+                elif method == "getSysConfig" or method == "setSysConfig":
+                    await self._sysConfigHandler.run(message)
+                else:
+                    logging.error("AdminController: rpc failed, no related function")
+
+        tasks = [recvMessage(), self._sysSetHandler.run(websocket)]
+        # 两个任务并行
+        asyncio.wait(tasks)
 
     def setOrderHandler(self, handler: OrderHandler):
         self._orderHandle = handler
