@@ -1,14 +1,21 @@
 import logging
-from admin.AdminController import AdminController
-import asyncio
-from admin.BillHandler import BillHandler
-from admin.DetailedListHandler import DetailedListHandler
-from admin.DeviceHandler import DeviceHandler
-from admin.OrderHandler import OrderHandler
-from admin.StatisticsHandler import StatisticsHandler
-from admin.SysConfigHandler import SysConfigHandler
-from admin.SystemStatusHandler import SystemStatusHandler
 
+# from src.admin.OrderHandler import OrderHandler
+# from .admin.AdminController import AdminController
+import asyncio
+
+# from admin.BillHandler import BillHandler
+# from admin.DetailedListHandler import DetailedListHandler
+# from admin.DeviceHandler import DeviceHandler
+# from admin.OrderHandler import OrderHandler
+# from admin.StatisticsHandler import StatisticsHandler
+# from admin.SysConfigHandler import SysConfigHandler
+# from admin.SysSetHandler import SysSetHandler
+# from admin.SystemStatusHandler import SystemStatusHandler
+import importlib
+from src.admin import *
+
+AdminController = importlib.import_module("admin.AdminController.AdminController")
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
     level=logging.INFO,
@@ -26,6 +33,7 @@ class MainController:
         self.adminController.setStatisticsHandler(StatisticsHandler())
         self.adminController.setSystemStatusHandler(SystemStatusHandler())
         self.adminController.setSysconfigHandler(SysConfigHandler())
+        self.adminController.setSysSetHandler(SysSetHandler())
 
     async def run(self):
         await self.adminController.serve()

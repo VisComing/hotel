@@ -1,11 +1,5 @@
 import logging
-
-from admin.SysConfigHandler import SysConfigHandler
-from .OrderHandler import OrderHandler
-from .BillHandler import BillHandler
-from .DetailedListHandler import DetailedListHandler
-from .StatisticsHandler import StatisticsHandler
-from .SystemStatusHandler import SystemStatusHandler
+from admin import *
 import websockets
 import json
 
@@ -15,6 +9,7 @@ import json
 
 class AdminController:
     async def control(self, websocket, path):
+        self._sysSetHandler.run(websocket)
         async for message in websocket:
             method = json.loads(message)["method"]
             if (
@@ -40,23 +35,26 @@ class AdminController:
             else:
                 logging.error("AdminController: rpc failed, no related function")
 
-    def setOrderHandler(self, handler: OrderHandler):
+    def setOrderHandler(self, handler: OrderHandler.OrderHandler):
         self._orderHandle = handler
 
-    def setBillHandler(self, handler: BillHandler):
+    def setBillHandler(self, handler: BillHandler.BillHandler):
         self._billHandler = handler
 
-    def setDetailedListHandler(self, handler: DetailedListHandler):
+    def setDetailedListHandler(self, handler: DetailedListHandler.DetailedListHandler):
         self._detailedListHandler = handler
 
-    def setStatisticsHandler(self, handler: StatisticsHandler):
+    def setStatisticsHandler(self, handler: StatisticsHandler.StatisticsHandler):
         self._statisticsHandler = handler
 
-    def setSystemStatusHandler(self, handler: SystemStatusHandler):
+    def setSystemStatusHandler(self, handler: SystemStatusHandler.SystemStatusHandler):
         self._systemStatusHandler = handler
 
-    def setSysconfigHandler(self, handler: SysConfigHandler):
+    def setSysconfigHandler(self, handler: SysConfigHandler.SysConfigHandler):
         self._sysConfigHandler = handler
 
+    def setSysSetHandler(self, handler: SysSetHandler.SysSetHandler):
+        self._sysSetHandler = handler
+
     async def serve(self):
-        await websockets.serve(self.control, "127.0.0.1", 8765)
+        await websockets.serve(self.control, "0.0.0.0", 18000)

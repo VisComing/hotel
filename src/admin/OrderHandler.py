@@ -1,18 +1,15 @@
 import logging
 from jsonrpcserver import method, async_dispatch as dispatch
-from .Device import database, Device
 
 
 class OrderHandler:
     async def run(self, message):
-        await dispatch(self.message)
+        await dispatch(message)
 
     @method
     async def createOrder(userID: str, roomID: str):
         logging.info("create order...")
-
         return {"roomID": "zhou_rui_fa"}
-        pass
 
     @method
     async def fetchOrders(filter: dict):
