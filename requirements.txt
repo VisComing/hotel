@@ -1,3 +1,5 @@
+aiomysql==0.0.21
+aiopeewee==0.4.2
 appdirs==1.4.4
 apply-defaults==0.1.4
 attrs==21.2.0
@@ -14,15 +16,19 @@ jsonrpcclient==3.3.6
 jsonrpcserver==4.2.0
 jsonschema==3.2.0
 mypy-extensions==0.4.3
+mysql-connector==2.2.9
 nodeenv==1.6.0
 pathspec==0.8.1
 peewee==3.14.4
+peewee-async==0.7.1
 pre-commit==2.13.0
+PyMySQL==0.9.3
 pyrsistent==0.17.3
 PyYAML==5.4.1
 regex==2021.4.4
 requests==2.25.1
 six==1.16.0
+sniffio==1.2.0
 toml==0.10.2
 urllib3==1.26.5
 virtualenv==20.4.7

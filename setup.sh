@@ -24,5 +24,5 @@ then
     pyenv global 3.8.5
 fi
 
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 pre-commit install

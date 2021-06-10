@@ -1,20 +1,21 @@
 import logging
-from peewee import *
+import asyncio
+import peewee
+import peewee_async
+from peewee_async import Manager, MySQLDatabase
 
-db = SqliteDatabase("hotel.db", pragmas={"foreign_keys": 1})
+db = peewee_async.MySQLDatabase(
+    "hotle",
+    max_connections=20,
+    host="localhost",
+    port=3306,
+    user="work",
+    password="password",
+    autocommit=True,
+)
+database = Manager(db, asyncio.get_event_loop())
 
 
-class BaseModel(Model):
-    def Insert(self):
-        if self.save(force_insert=True) != 1:
-            logging.error("insert failed")
-
-    def Delete(self):
-        self.delete_instance()
-
-    def Update(self):
-        if self.save(force_insert=True) != 1:
-            logging.error("update failed")
-
+class BaseModel(peewee.Model):
     class Meta:
         database = db
