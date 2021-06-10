@@ -4,3 +4,6 @@ websockets==9.1
 peewee_async==0.7.1
 jsonrpcserver==4.2.0
 mysql_connector_repackaged==0.3.1
+pre-commit==2.13.0
+black==21.5b2
+aiomysql==0.0.21
