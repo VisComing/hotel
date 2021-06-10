@@ -11,8 +11,9 @@ from src.admin.SysSetHandler import SysSetHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.AdminController import AdminController
 from src.model.Order import Order
+from src.model.BaseModel import DBManager
 
-print(Order)
+
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
     level=logging.INFO,
@@ -32,7 +33,8 @@ class MainController:
         self.adminController.setSysconfigHandler(SysConfigHandler())
         self.adminController.setSysSetHandler(SysSetHandler())
 
-    async def run(self):
+    async def run(self) -> None:
+        # await DBManager.create(Order, userID='zhou', orderID='1s23')
         await self.adminController.serve()
 
 

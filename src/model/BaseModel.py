@@ -1,19 +1,18 @@
-import logging
 import asyncio
 import peewee
-import peewee_async
 from peewee_async import Manager, MySQLDatabase
+import logging
 
-db = peewee_async.MySQLDatabase(
+db = MySQLDatabase(
     "hotel",
-    max_connections=20,
     host="localhost",
     port=3306,
     user="work",
     password="password",
     autocommit=True,
 )
-database = Manager(db, asyncio.get_event_loop())
+DBManager = Manager(db, loop=asyncio.get_event_loop())
+DBManager.database.allow_sync = logging.ERROR
 
 
 class BaseModel(peewee.Model):
