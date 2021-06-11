@@ -12,6 +12,3 @@ class ReachTem(BaseModel):
     class Meta:
         primary_key = CompositeKey("roomID", "timePoint")
         table_name = "tbReachTem"
-
-
-ReachTem.create_table(True)

@@ -17,6 +17,3 @@ class UsageRecord(BaseModel):
     class Meta:
         primary_key = CompositeKey("orderID", "startTime")
         table_name = "tbUsageRecord"
-
-
-UsageRecord.create_table(True)

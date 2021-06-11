@@ -12,6 +12,3 @@ class Bill(BaseModel):
 
     class Meta:
         table_name = "tbBill"
-
-
-Bill.create_table(True)

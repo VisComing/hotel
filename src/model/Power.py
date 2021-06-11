@@ -14,6 +14,3 @@ class Power(BaseModel):
     class Meta:
         primary_key = CompositeKey("roomID", "startTime")
         table_name = "tbPower"
-
-
-Power.create_table(True)

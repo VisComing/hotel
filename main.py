@@ -11,6 +11,7 @@ from src.admin.SysSetHandler import SysSetHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.PaymentHandler import PaymentHandler
 from src.admin.AdminController import AdminController
+from src.model import *
 
 # 配置logging
 logging.basicConfig(
@@ -36,11 +37,28 @@ class MainController:
         self.adminController.setSysSetHandler(SysSetHandler())
         self.adminController.setPaymentHandler(PaymentHandler())
 
+        self.createTables()
+
     async def run(self) -> None:
         """
         run 运行adminController以及clientController
         """
         await self.adminController.serve()
+
+    def createTables(self) -> None:
+        """
+        createTables 创建数据库表
+        """
+        Device.create_table(True)
+        Order.create_table(True)
+        Bill.create_table(True)
+        DetailListItem.create_table(True)
+        Power.create_table(True)
+        ReachTem.create_table(True)
+        Scheduling.create_table(True)
+        TargetTem.create_table(True)
+        UsageRecord.create_table(True)
+        WindSpeed.create_table(True)
 
 
 # 程序入口，启动事件循环

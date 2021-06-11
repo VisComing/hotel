@@ -17,6 +17,3 @@ class DetailListItem(BaseModel):
 
     class Meta:
         table_name = "tbDetailListItem"
-
-
-DetailListItem.create_table(True)

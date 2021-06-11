@@ -16,6 +16,3 @@ class Order(BaseModel):
 
     class Meta:
         table_name = "tbOrder"
-
-
-Order.create_table(True)

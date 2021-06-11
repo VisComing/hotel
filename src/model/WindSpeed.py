@@ -14,6 +14,3 @@ class WindSpeed(BaseModel):
     class Meta:
         primary_key = CompositeKey("roomID", "startTime")
         table_name = "tbWindSpeed"
-
-
-WindSpeed.create_table(True)

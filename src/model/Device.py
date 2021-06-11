@@ -16,6 +16,3 @@ class Device(BaseModel):
 
     class Meta:
         table_name = "tbDevice"
-
-
-Device.create_table(True)

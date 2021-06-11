@@ -12,6 +12,3 @@ class Scheduling(BaseModel):
     class Meta:
         primary_key = CompositeKey("roomID", "timePoint")
         tbale_name = "tbScheduling"
-
-
-Scheduling.create_table(True)
