@@ -7,10 +7,10 @@ class Scheduling(BaseModel):
     roomID = ForeignKeyField(
         Device, field="roomID", backref="Schedulings", db_column="roomID"
     )
-    time = CharField()
+    timePoint = CharField()
 
     class Meta:
-        primary_key = CompositeKey("roomID", "time")
+        primary_key = CompositeKey("roomID", "timePoint")
         tbale_name = "tbScheduling"
 
 
