@@ -10,7 +10,7 @@ class DetailedListHandler:
         await dispatch(self._message)
 
     @method
-    async def getDetailedList(orderID: str) -> list:
+    async def getDetailedList(orderID: str) -> dict:
         """
         getDetailedList 获取详单
 
@@ -18,7 +18,7 @@ class DetailedListHandler:
             orderID (str): 订单ID
 
         Returns:
-            list: list名字：items
+            dict
 
         """
-        return []
+        return {}
