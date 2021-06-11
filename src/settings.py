@@ -10,5 +10,5 @@ class MySQLDatabaseConfig(BaseSettings):
     DBNAME: str = "hotel"
     HOST: str = "localhost"
     PORT: int = 3306
-    USER: str = "work"
+    USERNAME: str = "work"
     PASSWORD: str = "password"
