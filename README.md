@@ -49,22 +49,30 @@ echo -e 'if [ -z "$BASH_VERSION" ]; then'\
 - 建议commit之前手动执行`black ./`
 ## 配置pre-commit
 - `pre-commit install`
-## 新建分支
+## Pull Request
 - 你对代码的任何更改都要建立新分支
 - 分支名命名规则：姓名首拼_日期_分支描述，如`zrf_0611_initProject`
 - 新建分支
-    - 确保自己在master分支上
-    - 拉取最新的master
-    - 新建分支 `git ckeckout -b zrf_0611_initProject`
-    - 更改代码，add、commit
-    - push时注意将本地分支推送到远端 `git push --set-upstream origin zrf_0611_initProject`
-    - 在gitee新建pull request
-    - 等待负责人评审
+    - 方式一：本地新建分支
+        - 确保自己在master分支上
+        - 拉取最新的master
+        - 新建分支 `git ckeckout -b zrf_0611_initProject`
+        - 更改代码，add、commit
+        - push时注意将本地分支推送到远端 `git push --set-upstream origin zrf_0611_initProject`
+    - 方式二：远程新建
+        - 在gitee上新建一个分支，注意以master为起点
+        - `git fetch --all`
+        -  `git checkout -b zrf_0611_initProject origin/zrf_0611_initProject`
+- 在gitee新建pull request
+    - 源分支选择你创建的分支
+    - 目标分支选择master
+- 等待负责人评审
 
 ## IDE
 - 推荐使用vscode
 - vscode插件推荐：python、MySQL(3.8.7)、gitlens
 - Python Docstring Generator 用于快速生成函数注释模板
+    - 在该插件的设置里勾选上 `Auto Docstring: Include Name`
 
 ## peewee教程
 - 首先import你准备操作的model，比如`from src.model.Order import Order`，这样就把Order类导入了
@@ -76,6 +84,6 @@ echo -e 'if [ -z "$BASH_VERSION" ]; then'\
 - 你需要创建一个hotel数据库 `create database hotel;`
 - 你可以更改本地连接数据库的配置信息，在`src/settings.py`中的`MySQLDatabaseConfig`进行修改
 
-## websocktes
+## jsonrpc/websockets
 - [参考文档](https://beau.click/jsonrpc/websockets)
 - [如何返回错误](https://jsonrpcserver.readthedocs.io/en/latest/api.html#errors)
