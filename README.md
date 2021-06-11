@@ -78,3 +78,4 @@ echo -e 'if [ -z "$BASH_VERSION" ]; then'\
 
 ## websocktes
 - [参考文档](https://beau.click/jsonrpc/websockets)
+- [如何返回错误](https://jsonrpcserver.readthedocs.io/en/latest/api.html#errors)
