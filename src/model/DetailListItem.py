@@ -7,7 +7,7 @@ class DetailListItem(BaseModel):
     orderID = ForeignKeyField(
         Order, field="orderID", backref="DetailListItems", db_column="orderID"
     )
-    detailListID = CharField()
+    detailListID = CharField(primary_key=True)
     startTime = DateTimeField()
     endtime = DateTimeField()
     # 0表示低风、1表示中风、2表示高风
@@ -16,7 +16,6 @@ class DetailListItem(BaseModel):
     billingRate = FloatField()
 
     class Meta:
-        primary_key = CompositeKey("detailListID", "orderID")
         table_name = "tbDetailListItem"
 
 
