@@ -8,7 +8,7 @@ class Device(BaseModel):
     isPower = BooleanField()
     targetTemperature = IntegerField()
     currentTemperature = IntegerField()
-    # 0表示低风、1表示中风、2表示高风
+    # 1表示低风、1表示中风、3表示高风
     windSpeed = IntegerField()
     isAskAir = BooleanField()
     isSupplyAir = BooleanField()

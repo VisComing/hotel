@@ -9,7 +9,7 @@ class UsageRecord(BaseModel):
     )
     startTime = DateTimeField()
     endTime = DateTimeField()
-    # 0表示低风、1表示中风、2表示高风
+    # 1表示低风、1表示中风、3表示高风
     windSpeed = IntegerField()
     cost = FloatField()
     billingRate = FloatField()
