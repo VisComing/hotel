@@ -70,3 +70,8 @@ echo -e 'if [ -z "$BASH_VERSION" ]; then'\
 - 首先import你准备操作的model，比如`from src.model.Order import Order`，这样就把Order类导入了
 - 导入DBManager，`from src.model.BaseModel import DBManager`
 - 参考peewee-async[官方文档](https://peewee-async.readthedocs.io/en/latest/peewee_async/api.html#manager)
+
+## 数据库
+- mysql
+- 你需要创建一个hotel数据库 `create database hotel;`
+- 你可以更改本地连接数据库的配置信息，在`src/settings.py`中的`MySQLDatabaseConfig`进行修改
