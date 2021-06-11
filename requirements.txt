@@ -7,3 +7,4 @@ mysql_connector_repackaged==0.3.1
 pre-commit==2.13.0
 black==21.5b2
 aiomysql==0.0.21
+pydantic==1.8.2
