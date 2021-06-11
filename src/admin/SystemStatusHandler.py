@@ -10,8 +10,8 @@ class SystemStatusHandler:
         return {}
 
     @method
-    async def startSystem() -> dict:
-        return {}
+    async def startSystem() -> None:
+        return None
 
     @method
     async def stopSystem() -> None:
