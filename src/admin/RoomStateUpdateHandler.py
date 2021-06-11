@@ -1,7 +1,7 @@
 import asyncio
 
 
-class SysSetHandler:
+class RoomStateUpdateHandler:
     async def run(self, websocket) -> None:
         await self.roomStateUpdate(websocket)
 

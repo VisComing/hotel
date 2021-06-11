@@ -5,7 +5,7 @@ from src.admin.OrderHandler import OrderHandler
 from src.admin.StatisticsHandler import StatisticsHandler
 from src.admin.SysConfigHandler import SysConfigHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
-from src.admin.SysSetHandler import SysSetHandler
+from src.admin.RoomStateUpdateHandler import RoomStateUpdateHandler
 from src.admin.PaymentHandler import PaymentHandler
 import websockets
 import json
@@ -80,8 +80,8 @@ class AdminController:
     def setSysconfigHandler(self, handler: SysConfigHandler):
         self._sysConfigHandler = handler
 
-    def setSysSetHandler(self, handler: SysSetHandler):
-        self._sysSetHandler = handler
+    def setRoomStateUpdateHandler(self, handler: RoomStateUpdateHandler):
+        self._roomStateUpdateHandler = handler
 
     def setPaymentHandler(self, handler: PaymentHandler):
         self._sysPaymentHandler = handler
