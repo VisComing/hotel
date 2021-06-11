@@ -11,6 +11,7 @@ class Order(BaseModel):
     orderID = CharField(primary_key=True)
     createdTime = DateTimeField()
     finishedTime = DateTimeField()
+    # state: using、unpaid、completed
     state = CharField()
 
     class Meta:
