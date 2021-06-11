@@ -9,6 +9,7 @@ from src.admin.StatisticsHandler import StatisticsHandler
 from src.admin.SysConfigHandler import SysConfigHandler
 from src.admin.SysSetHandler import SysSetHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
+from src.admin.PaymentHandler import PaymentHandler
 from src.admin.AdminController import AdminController
 
 # 配置logging
@@ -33,6 +34,7 @@ class MainController:
         self.adminController.setSystemStatusHandler(SystemStatusHandler())
         self.adminController.setSysconfigHandler(SysConfigHandler())
         self.adminController.setSysSetHandler(SysSetHandler())
+        self.adminController.setPaymentHandler(PaymentHandler())
 
     async def run(self) -> None:
         """

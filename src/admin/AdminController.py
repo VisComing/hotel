@@ -6,6 +6,7 @@ from src.admin.StatisticsHandler import StatisticsHandler
 from src.admin.SysConfigHandler import SysConfigHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.SysSetHandler import SysSetHandler
+from src.admin.PaymentHandler import PaymentHandler
 import websockets
 import json
 import asyncio
@@ -81,6 +82,9 @@ class AdminController:
 
     def setSysSetHandler(self, handler: SysSetHandler):
         self._sysSetHandler = handler
+
+    def setPaymentHandler(self, handler: PaymentHandler):
+        self._sysPaymentHandler = handler
 
     async def serve(self):
         """
