@@ -1,0 +1,569 @@
+nyarpc: 0.0.1-alpha
+
+info:
+  version: 0.0.3-alpha
+  title: 分布式空调系统管理后台通信协议
+
+components:
+  schemas:
+    UserID:
+      description: 用户 ID
+      type: string
+      example: Alice
+    OrderID:
+      description: 订单 ID
+      type: string
+      example: 027de49d-11f2-437b-b4bd-1a06a4f0df6e
+    RoomID:
+      description: 房间 ID
+      type: string
+      example: 01-32-34
+    BillID:
+      description: 账单 ID
+      type: string
+      example: 7bc878cb-74a6-4281-823e-f61d5887bc05
+    Timestamp:
+      description: Unix 时间戳 (从 UTC 1970 年 1 月 1 日 0 时 0 分 0 秒起至现在的总秒数，不考虑闰秒)
+      type: number
+      example: 1622516073
+    Temperature:
+      description: 温度 (单位为摄氏度)
+      type: number
+      example: 26
+    WindSpeed:
+      description: 风速 (`low` 代表「低风速」，`medium` 代表「中风速」，`high` 代表「高风速」)
+      type: string
+      enums:
+        - low
+        - medium
+        - high
+
+    Order:
+      description: 订单
+      type: object
+      required:
+        - orderID
+        - userID
+        - roomID
+        - createdTime
+        - finishedTime
+        - state
+      properties:
+        orderID:
+          $ref: '#/components/schemas/OrderID'
+        userID:
+          $ref: '#/components/schemas/UserID'
+        roomID:
+          $ref: '#/components/schemas/RoomID'
+        createdTime:
+          $ref: '#/components/schemas/Timestamp'
+          description: 订单的创建时间 (以 Unix 时间戳形式表示)
+        finishedTime:
+          $ref: '#/components/schemas/Timestamp'
+          description: 订单的结束时间 (以 Unix 时间戳形式表示)
+          example: 1622725792
+        state:
+          $ref: '#/components/schemas/Order.State'
+    Order.State:
+      description: 订单状态 (`using` 代表「使用中」，`unpaid` 代表「未付款」，`completed` 代表「已完成」)
+      type: string
+      enums:
+        - using
+        - unpaid
+        - completed
+    Bill:
+      description: 账单
+      type: object
+      required:
+        - orderID
+        - billID
+        - totalCost
+      properties:
+        orderID:
+          $ref: '#/components/schemas/OrderID'
+        billID:
+          $ref: '#/components/schemas/BillID'
+        totalCost:
+          type: number
+          description: 总费用
+          example: 2434
+    DetailedListItem:
+      description: 详单条目
+      type: object
+      required:
+        - startTime
+        - endTime
+        - windSpeed
+        - billingRate
+      properties:
+        startTime:
+          $ref: '#/components/schemas/Timestamp'
+          description: 开始时间 (以 Unix 时间戳形式表示)
+        endTime:
+          $ref: '#/components/schemas/Timestamp'
+          description: 结束时间 (以 Unix 时间戳形式表示)
+          example: 1622541697
+        windSpeed:
+          $ref: '#/components/schemas/WindSpeed'
+          description: 该时间段的风速
+        billingRate:
+          description: 该时间段的计费速率 (单位：元/秒)
+          type: number
+          example: 0.5
+    DetailedList:
+      description: 详单
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DetailedListItem'
+
+    SysConf.TemperatureControlMode:
+      description: 温控模式 (`heating` 表示制热，`cooling` 表示制冷)
+      type: string
+      enums:
+        - heating
+        - cooling
+
+    SysConf.TargetTemperatureRange:
+      description: 温控范围
+      type: object
+      properties:
+        heating:
+          description: 制热模式下的温控范围
+          type: object
+          properties:
+            min:
+              description: 最低温度 (单位：摄氏度)
+              type: number
+              example: 18
+            max:
+              description: 最高温度 (单位：摄氏度)
+              type: number
+              example: 26
+        cooling:
+          description: 制冷模式下的温控范围
+          type: object
+          properties:
+            min:
+              description: 最低温度 (单位：摄氏度)
+              type: number
+              example: 26
+            max:
+              description: 最高温度 (单位：摄氏度)
+              example: 30
+
+    SysConf.DefaultTemperature:
+      description: 缺省温度 (单位：摄氏度)
+      type: number
+      example: 26
+
+    SysConf.ElectricityPrice:
+      description: 计费标准 (单位：元/度)
+      type: number
+      example: 1
+
+    SysConf.ElectricityConsumptionRate:
+      description: 耗电速率
+      type: object
+      properties:
+        low:
+          description: 低风速下的耗电速率 (单位：度/分钟)
+          type: number
+          example: 1
+        medium:
+          description: 中风速下的耗电速率 (单位：度/分钟)
+          type: number
+          example: 2
+        high:
+          description: 高风速下的耗电速率 (单位：度/分钟)
+          type: number
+          example: 3
+
+    SysConf.MaxNumOfClientsToServe:
+      description: 最大可服务对象数
+      type: number
+      example: 3
+
+    SysConf:
+      type: object
+      required:
+        - temperatureControlMode
+        - targetTemperatureRange
+        - defaultTemperature
+        - electricityPrice
+        - electricityConsumptionRate
+        - maxNumOfClientsToServe
+      properties:
+        temperatureControlMode:
+          $ref: '#/components/schemas/SysConf.TemperatureControlMode'
+        targetTemperatureRange:
+          $ref: '#/components/schemas/SysConf.TargetTemperatureRange'
+        defaultTemperature:
+          $ref: '#/components/schemas/SysConf.DefaultTemperature'
+        electricityPrice:
+          $ref: '#/components/schemas/SysConf.ElectricityPrice'
+        electricityConsumptionRate:
+          $ref: '#/components/schemas/SysConf.ElectricityConsumptionRate'
+        maxNumOfClientsToServe:
+          $ref: '#/components/schemas/SysConf.MaxNumOfClientsToServe'
+
+methods:
+  createOrder:
+    description: 创建新「订单」
+    tags:
+      - Order
+    request:
+      schema:
+        type: object
+        required:
+          - userID
+          - roomID
+        properties:
+          userID:
+            $ref: '#/components/schemas/UserID'
+          roomID:
+            $ref: '#/components/schemas/RoomID'
+    response:
+      schema:
+        type: object
+        required:
+          - orderID
+        properties:
+          orderID:
+            $ref: '#/components/schemas/OrderID'
+    errors:
+      40101:
+        name: INVALID_USER_ID
+        description: 客户端提供的「用户 ID」格式错误或不存在
+        message: 无效的用户 ID
+      40102:
+        name: INVALID_ROOM_ID
+        description: 客户端提供的「房间 ID」格式错误或不存在
+        message: 无效的房间 ID
+      40103:
+        name: ROOM_UNAVAILABLE
+        description: 客户端指定的房间处于不可用状态 (被其他用户使用中、维护中)
+        message: 房间不可用
+
+  fetchOrders:
+    description: 获取「订单」列表
+    request:
+      schema:
+        type: object
+        required:
+          - filter
+        properties:
+          filter:
+            description: 过滤条件
+            type: object
+            properties:
+              userID:
+                $ref: '#/components/schemas/UserID'
+              roomID:
+                $ref: '#/components/schemas/RoomID'
+              state:
+                $ref: '#/components/schemas/Order.State'
+    response:
+      schema:
+        type: object
+        required:
+          - orders
+        properties:
+          orders:
+            description: 符号条件的订单列表
+            type: array
+            items:
+              $ref: '#/components/schemas/Order'
+
+  finishOrder:
+    description: 结束「订单」
+    request:
+      schema:
+        type: object
+        required:
+          - orderID
+        properties:
+          orderID:
+            $ref: '#/components/schemas/OrderID'
+    response:
+      schema:
+        type: 'null'
+
+    errors:
+      40301:
+        name: INVALID_ORDER_ID
+        description: 客户端提供的「订单 ID」格式错误或不存在
+        message: 无效的订单 ID
+      40302:
+        name: INVALID_ORDER_STATE
+        description: 指定订单的状态不允许进行「结束」操作
+        message: 非法的订单状态
+        data:
+          schema:
+            type: object
+            required:
+              - state
+            properties:
+              state:
+                $ref: '#/components/schemas/Order.State'
+
+  getBill:
+    description: 获取「账单」
+    request:
+      schema:
+        type: object
+        required:
+          - orderID
+        properties:
+          orderID:
+            $ref: '#/components/schemas/OrderID'
+    response:
+      schema:
+        $ref: '#/components/schemas/Bill'
+
+    errors:
+      40401:
+        name: INVALID_ORDER_ID
+        description: 客户端提供的「订单 ID」格式错误或不存在
+        message: 无效的订单 ID
+      40402:
+        name: INVALID_ORDER_STATE
+        description: 指定订单的状态不允许进行「获取账单」操作
+        message: 非法的订单状态
+        data:
+          schema:
+            type: object
+            required:
+              - state
+            properties:
+              state:
+                $ref: '#/components/schemas/Order.State'
+
+  makePayment:
+    description: 为账单付款
+    request:
+      schema:
+        type: object
+        required:
+          - orderID
+        properties:
+          orderID:
+            $ref: '#/components/schemas/OrderID'
+    response:
+      schema:
+        type: "null"
+    errors:
+      40501:
+        name: INVALID_ORDER_ID
+        description: 客户端提供的「订单 ID」格式错误或不存在
+        message: 无效的订单 ID
+      40502:
+        name: INVALID_ORDER_STATE
+        description: 指定订单的状态不允许进行「付款」操作
+        message: 非法的订单状态
+        data:
+          schema:
+            type: object
+            required:
+              - state
+            properties:
+              state:
+                $ref: '#/components/schemas/Order.State'
+
+  getDetailedList:
+    description: 获取「详单」
+    request:
+      schema:
+        type: object
+        required:
+          - orderID
+        properties:
+          orderID:
+            $ref: '#/components/schemas/OrderID'
+    response:
+      schema:
+        $ref: '#/components/schemas/DetailedList'
+
+    errors:
+      40601:
+        name: INVALID_ORDER_ID
+        description: 客户端提供的「订单 ID」格式错误或不存在
+        message: 无效的订单 ID
+      40602:
+        name: INVALID_ORDER_STATE
+        description: 指定订单的状态不允许进行「获取详单」操作
+        message: 非法的订单状态
+        data:
+          schema:
+            type: object
+            required:
+              - state
+            properties:
+              state:
+                $ref: '#/components/schemas/Order.State'
+
+  getStatistics:
+    description: 获取统计报表
+    request:
+      schema:
+        type: object
+        required:
+          - startTime
+          - endTime
+        properties:
+          startTime:
+            $ref: '#/components/schemas/Timestamp'
+            description: 开始时间 (Unix 时间戳)
+            example: 1622726063
+          endTime:
+            description: 结束时间 (Unix 时间戳)
+            example: 1622812463
+    response:
+      schema:
+        type: object
+        required:
+          - statistics
+        properties:
+          statistics:
+            description: 所有房间的统计报表
+            type: array
+            items:
+              type: object
+              required:
+                - roomID
+                - airConditionerUsedTimes
+                - mostFrequentlyUsedTargetTemperature
+                - mostFrequentlyUsedWindSpeed
+                - targetTemperatureReachedTimes
+                - scheduledTimes
+                - numberOfdetailedListRecords
+                - totalCost
+              properties:
+                roomID:
+                  $ref: '#/components/schemas/RoomID'
+                airConditionerUsedTimes:
+                  description: 空调使用次数
+                  type: number
+                  example: 98
+                mostFrequentlyUsedTargetTemperature:
+                  description: 最常用目标温度 (单位：摄氏度)
+                  type: number
+                  example: 23
+                mostFrequentlyUsedWindSpeed:
+                  $ref: '#/components/schemas/WindSpeed'
+                  description: 最常用风速
+                targetTemperatureReachedTimes:
+                  description: 达到目标温度次数
+                  type: number
+                  example: 42
+                scheduledTimes:
+                  description: 被调度次数
+                  type: number
+                  example: 233
+                numberOfdetailedListRecords:
+                  description: 详单记录数
+                  type: number
+                  example: 2434
+                totalCost:
+                  description: 总费用 (单位：元)
+                  type: number
+                  example: 2080000
+
+
+  getSystemStatus:
+    description: 获取系统状态
+    response:
+      schema:
+        type: object
+        required:
+          - started
+        properties:
+          started:
+            type: boolean
+            description: 系统是否已启动
+
+  startSystem:
+    description: 启动系统
+    response:
+      schema:
+        type: 'null'
+    errors:
+      40801:
+        name: SYSTEM_IS_RUNNING
+        description: 试图启动运行中的系统
+        message: 系统已经在运行中
+
+  stopSystem:
+    description: 停止系统
+    response:
+      schema:
+        type: 'null'
+    errors:
+      40901:
+        name: SYSTEM_IS_NOT_RUNNING
+        description: 试图停止未运行的系统
+        message: 系统尚未启动
+
+  getSysConfig:
+    description: 获取系统配置
+    response:
+      schema:
+        $ref: '#/components/schemas/SysConf'
+
+  setSysConfig:
+    description: 设置系统配置
+    request:
+      schema:
+        type: object
+        required:
+          - newConfigration
+        properties:
+          newConfigration:
+            $ref: '#/components/schemas/SysConf'
+            required: []
+    response:
+      schema:
+        type: 'null'
+    errors:
+      41101:
+        name: PROHIBIT_CONFIGURATION_AT_RUNTIME
+        description: 禁止在运行时设置系统配置
+        message: 禁止在运行时设置系统配置
+
+rMethods:
+  roomInformationUpdate:
+    description: 房间信息更新
+    request:
+      schema:
+        type: object
+        properties:
+          infos:
+            type: array
+            items:
+              type: object
+              required:
+                - roomID
+                - isStarted
+              properties:
+                roomID:
+                  $ref: '#/components/schemas/RoomID'
+                isStarted:
+                  description: 房间空调是否已启动
+                  type: boolean
+                roomTemperature:
+                  description: 房间温度 (单位：摄氏度)
+                  type: number
+                  example: 28
+                targetTemperature:
+                  description: 目标温度 (单位：摄氏度)
+                  type: number
+                  example: 21
+                windSpeed:
+                  $ref: '#/components/schemas/WindSpeed'
+                isSupplyingWind:
+                  description: 是否正在送风
+                  type: boolean
