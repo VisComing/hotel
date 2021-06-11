@@ -4,14 +4,16 @@ from src.model.Order import Order
 
 
 class OrderHandler:
-    async def run(self, message: str) -> None:
+    async def run(self, message: str, websocket) -> None:
         """
         run 使用jsonrpc将消息分派给不同函数
 
         Args:
             message (str): 收到的消息
         """
-        await dispatch(message)
+        response = await dispatch(message)
+        if response.wanted:
+            await websocket.send(str(response))
 
     @method
     async def createOrder(userID: str, roomID: str) -> dict:

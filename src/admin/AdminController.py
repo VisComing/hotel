@@ -33,21 +33,21 @@ class AdminController:
                     or method == "fetchOrders"
                     or method == "finishOrder"
                 ):
-                    await self._orderHandle.run(message)
+                    await self._orderHandle.run(message, websocket)
                 elif method == "getBill":
-                    await self._billHandler.run(message)
+                    await self._billHandler.run(message, websocket)
                 elif method == "getDetailedList":
-                    await self._detailedListHandler.run(message)
+                    await self._detailedListHandler.run(message, websocket)
                 elif method == "getStatistics":
-                    await self._statisticsHandler.run(message)
+                    await self._statisticsHandler.run(message, websocket)
                 elif (
                     method == "getSystemStatus"
                     or method == "startSystem"
                     or method == "stopSystem"
                 ):
-                    await self._systemStatusHandler.run(message)
+                    await self._systemStatusHandler.run(message, websocket)
                 elif method == "getSysConfig" or method == "setSysConfig":
-                    await self._sysConfigHandler.run(message)
+                    await self._sysConfigHandler.run(message, websocket)
                 else:
                     logging.error("AdminController: rpc failed, no related function")
 

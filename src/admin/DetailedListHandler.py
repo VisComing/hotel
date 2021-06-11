@@ -3,11 +3,13 @@ from jsonrpcserver.methods import Method
 
 
 class DetailedListHandler:
-    async def run(self) -> None:
+    async def run(self, message: str, websocket) -> None:
         """
         run jsonrpc将不同的调用指派到不同的函数上
         """
-        await dispatch(self._message)
+        response = await dispatch(message)
+        if response.wanted:
+            await websocket.send(str(response))
 
     @method
     async def getDetailedList(orderID: str) -> dict:
