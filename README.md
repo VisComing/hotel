@@ -16,19 +16,15 @@ libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-d
 ```
 ### clone pyenv代码库
 - `git clone https://github.com.cnpmjs.org/pyenv/pyenv.git ~/.pyenv`
-### 将pyenv添加进环境变量
+### [将pyenv添加进环境变量](https://github.com/pyenv/pyenv#basic-github-checkout)
+这两行放在~/.profile的开头
 ```
-echo -e 'if shopt -q login_shell; then' \
-      '\n  export PYENV_ROOT="$HOME/.pyenv"' \
-      '\n  export PATH="$PYENV_ROOT/bin:$PATH"' \
-      '\n eval "$(pyenv init --path)"' \
-      '\nfi' >> ~/.bashrc
-
-echo -e 'if [ -z "$BASH_VERSION" ]; then'\
-      '\n  export PYENV_ROOT="$HOME/.pyenv"'\
-      '\n  export PATH="$PYENV_ROOT/bin:$PATH"'\
-      '\n  eval "$(pyenv init --path)"'\
-      '\nfi' >>~/.profile
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+```
+这一行放在~/.profile结尾
+```
+eval "$(pyenv init --path)"
 ```
 ### 重启shell或者source
 - `source ~/.bashrc`
