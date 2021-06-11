@@ -10,10 +10,8 @@ from src.admin.SysConfigHandler import SysConfigHandler
 from src.admin.SysSetHandler import SysSetHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.AdminController import AdminController
-from src.model.Order import Order
-from src.model.BaseModel import DBManager
 
-
+# 配置logging
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s",
     level=logging.INFO,
@@ -23,6 +21,9 @@ logging.basicConfig(
 
 class MainController:
     def __init__(self) -> None:
+        """
+        __init__ MainCOntroller构造函数，将各种handler注入到controller中
+        """
         self.adminController = AdminController()
         # 依赖注入
         self.adminController.setOrderHandler(OrderHandler())
@@ -34,10 +35,13 @@ class MainController:
         self.adminController.setSysSetHandler(SysSetHandler())
 
     async def run(self) -> None:
-        # await DBManager.create(Order, userID='zhou', orderID='1s23')
+        """
+        run 运行adminController以及clientController
+        """
         await self.adminController.serve()
 
 
+# 程序入口，启动事件循环
 if __name__ == "__main__":
     mainController = MainController()
     asyncio.get_event_loop().run_until_complete(mainController.run())

@@ -64,6 +64,7 @@ echo -e 'if [ -z "$BASH_VERSION" ]; then'\
 ## IDE
 - 推荐使用vscode
 - vscode插件推荐：python、MySQL(3.8.7)、gitlens
+- Python Docstring Generator 用于快速生成函数注释模板
 
 ## peewee教程
 - 首先import你准备操作的model，比如`from src.model.Order import Order`，这样就把Order类导入了
