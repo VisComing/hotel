@@ -8,4 +8,4 @@ class SysSetHandler:
     async def roomStateUpdate(self, websocket) -> None:
         while True:
             pass
-            asyncio.sleep(1)
+            await asyncio.sleep(1)

@@ -12,7 +12,7 @@ import asyncio
 
 
 class AdminController:
-    async def control(self, websocket):
+    async def control(self, websocket, path):
         """
         control 处理该连接的消息
 
@@ -50,8 +50,9 @@ class AdminController:
                     logging.error("AdminController: rpc failed, no related function")
 
         # 并行执行接受消息函数，设置定时发送消息的handler
+        print("here")
         tasks = [recvMessage(), self._sysSetHandler.run(websocket)]
-        asyncio.wait(tasks)
+        await asyncio.wait(tasks)
 
     def setOrderHandler(self, handler: OrderHandler):
         """
@@ -84,4 +85,5 @@ class AdminController:
         """
         serve 监听18000端口，处理连接
         """
+        print("i am here")
         await websockets.serve(self.control, "0.0.0.0", 18000)

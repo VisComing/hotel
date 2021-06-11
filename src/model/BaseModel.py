@@ -12,6 +12,7 @@ db = MySQLDatabase(
     autocommit=True,
 )
 DBManager = Manager(db, loop=asyncio.get_event_loop())
+# 如果使用同步的方式操作数据库，就报error
 DBManager.database.allow_sync = logging.ERROR
 
 
