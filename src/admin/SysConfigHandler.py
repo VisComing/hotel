@@ -10,5 +10,5 @@ class SysConfigHandler:
         return {}
 
     @method
-    def setSysConfig(newConfigration: dict) -> dict:
-        return {}
+    def setSysConfig(newConfigration: dict) -> None:
+        return None
