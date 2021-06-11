@@ -10,7 +10,7 @@ from src.admin.PaymentHandler import PaymentHandler
 import websockets
 import json
 import asyncio
-from src.settings import WebsocketsConfig
+from src.settings import websocketsConfig
 
 
 class AdminController:
@@ -91,5 +91,6 @@ class AdminController:
         serve 监听18000端口，处理连接
         """
         print("i am here")
-        websocketConfig = WebsocketsConfig()
-        await websockets.serve(self.control, websocketConfig.HOST, websocketConfig.PORT)
+        await websockets.serve(
+            self.control, websocketsConfig.HOST, websocketsConfig.PORT
+        )

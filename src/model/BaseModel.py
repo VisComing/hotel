@@ -2,9 +2,8 @@ import asyncio
 import peewee
 from peewee_async import Manager, MySQLDatabase
 import logging
-from src.settings import MySQLDatabaseConfig
+from src.settings import mySQLDatabaseConfig
 
-mySQLDatabaseConfig = MySQLDatabaseConfig()
 print(mySQLDatabaseConfig.USERNAME)
 db = MySQLDatabase(
     mySQLDatabaseConfig.DBNAME,
