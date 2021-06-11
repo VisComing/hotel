@@ -1,5 +1,5 @@
 from pydantic.errors import BoolError
-from src.model.BaseModel import BaseModel, database
+from src.model.BaseModel import BaseModel
 from peewee import *
 
 
