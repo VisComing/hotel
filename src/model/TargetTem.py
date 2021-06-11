@@ -14,3 +14,6 @@ class TargetTem(BaseModel):
     class Meta:
         primary_key = CompositeKey("roomID", "startTime")
         table_name = "tbTargetTem"
+
+
+TargetTem.create_table(True)

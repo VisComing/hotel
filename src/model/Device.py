@@ -3,7 +3,7 @@ from peewee import *
 
 
 class Device(BaseModel):
-    roomID = TextField(primary_key=True)
+    roomID = CharField(primary_key=True)
     isPower = IntegerField()
     targetTemperature = IntegerField()
     currentTemperature = IntegerField()
@@ -15,3 +15,6 @@ class Device(BaseModel):
 
     class Meta:
         table_name = "tbDevice"
+
+
+Device.create_table(True)

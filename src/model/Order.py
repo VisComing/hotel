@@ -3,12 +3,15 @@ from peewee import *
 
 
 class Order(BaseModel):
-    userID = TextField()
-    roomID = TextField()
-    orderID = TextField(primary_key=True)
+    userID = CharField()
+    roomID = CharField()
+    orderID = CharField(primary_key=True)
     createdTime = DateTimeField()
     finishedTime = DateTimeField()
-    state = TextField()
+    state = CharField()
 
     class Meta:
         table_name = "tbOrder"
+
+
+Order.create_table(True)
