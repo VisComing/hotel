@@ -9,7 +9,7 @@ class Power(BaseModel):
     )
     startTime = DateTimeField()
     endTime = DateTimeField()
-    powerState = IntegerField()
+    powerState = BooleanField()
 
     class Meta:
         primary_key = CompositeKey("roomID", "startTime")

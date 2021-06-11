@@ -7,6 +7,7 @@ class Device(BaseModel):
     isPower = IntegerField()
     targetTemperature = IntegerField()
     currentTemperature = IntegerField()
+    # 0表示低风、1表示中风、2表示高风
     windSpeed = IntegerField()
     isAskAir = IntegerField()
     isSupplyAir = IntegerField()
