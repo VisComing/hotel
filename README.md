@@ -75,3 +75,6 @@ echo -e 'if [ -z "$BASH_VERSION" ]; then'\
 - mysql
 - 你需要创建一个hotel数据库 `create database hotel;`
 - 你可以更改本地连接数据库的配置信息，在`src/settings.py`中的`MySQLDatabaseConfig`进行修改
+
+## websocktes
+- [参考文档](https://beau.click/jsonrpc/websockets)
