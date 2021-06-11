@@ -1,7 +1,7 @@
 nyarpc: 0.0.1-alpha
 
 info:
-  version: 0.0.2-alpha
+  version: 0.0.3-alpha
   title: 分布式空调系统管理后台通信协议
 
 components:
@@ -343,6 +343,37 @@ methods:
               state:
                 $ref: '#/components/schemas/Order.State'
 
+  makePayment:
+    description: 为账单付款
+    request:
+      schema:
+        type: object
+        required:
+          - orderID
+        properties:
+          orderID:
+            $ref: '#/components/schemas/OrderID'
+    response:
+      schema:
+        type: "null"
+    errors:
+      40501:
+        name: INVALID_ORDER_ID
+        description: 客户端提供的「订单 ID」格式错误或不存在
+        message: 无效的订单 ID
+      40502:
+        name: INVALID_ORDER_STATE
+        description: 指定订单的状态不允许进行「付款」操作
+        message: 非法的订单状态
+        data:
+          schema:
+            type: object
+            required:
+              - state
+            properties:
+              state:
+                $ref: '#/components/schemas/Order.State'
+
   getDetailedList:
     description: 获取「详单」
     request:
@@ -358,11 +389,11 @@ methods:
         $ref: '#/components/schemas/DetailedList'
 
     errors:
-      40501:
+      40601:
         name: INVALID_ORDER_ID
         description: 客户端提供的「订单 ID」格式错误或不存在
         message: 无效的订单 ID
-      40502:
+      40602:
         name: INVALID_ORDER_STATE
         description: 指定订单的状态不允许进行「获取详单」操作
         message: 非法的订单状态
@@ -461,7 +492,7 @@ methods:
       schema:
         type: 'null'
     errors:
-      40701:
+      40801:
         name: SYSTEM_IS_RUNNING
         description: 试图启动运行中的系统
         message: 系统已经在运行中
@@ -472,7 +503,7 @@ methods:
       schema:
         type: 'null'
     errors:
-      40801:
+      40901:
         name: SYSTEM_IS_NOT_RUNNING
         description: 试图停止未运行的系统
         message: 系统尚未启动
@@ -498,7 +529,7 @@ methods:
       schema:
         type: 'null'
     errors:
-      41001:
+      41101:
         name: PROHIBIT_CONFIGURATION_AT_RUNTIME
         description: 禁止在运行时设置系统配置
         message: 禁止在运行时设置系统配置
