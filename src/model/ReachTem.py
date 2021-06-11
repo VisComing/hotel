@@ -7,10 +7,10 @@ class ReachTem(BaseModel):
     roomID = ForeignKeyField(
         Device, field="roomID", backref="ReachTems", db_column="roomID"
     )
-    time = DateTimeField()
+    timePoint = DateTimeField()
 
     class Meta:
-        primary_key = CompositeKey("roomID", "time")
+        primary_key = CompositeKey("roomID", "timePoint")
         table_name = "tbReachTem"
 
 
