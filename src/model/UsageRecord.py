@@ -15,7 +15,7 @@ class UsageRecord(BaseModel):
     billingRate = FloatField()
 
     class Meta:
-        primary_key = CompositeKey("orderID, startTime")
+        primary_key = CompositeKey("orderID", "startTime")
         table_name = "tbUsageRecord"
 
 
