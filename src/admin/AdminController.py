@@ -9,6 +9,7 @@ from src.admin.SysSetHandler import SysSetHandler
 import websockets
 import json
 import asyncio
+from src.settings import WebsocketsConfig
 
 
 class AdminController:
@@ -86,4 +87,5 @@ class AdminController:
         serve 监听18000端口，处理连接
         """
         print("i am here")
-        await websockets.serve(self.control, "0.0.0.0", 18000)
+        websocketConfig = WebsocketsConfig()
+        await websockets.serve(self.control, websocketConfig.HOST, websocketConfig.PORT)
