@@ -60,3 +60,12 @@ echo -e 'if [ -z "$BASH_VERSION" ]; then'\
     - push时注意将本地分支推送到远端 `git push --set-upstream origin zrf_0611_initProject`
     - 在gitee新建pull request
     - 等待负责人评审
+
+## IDE
+- 推荐使用vscode
+- vscode插件推荐：python、MySQL(3.8.7)、gitlens
+
+## peewee教程
+- 首先import你准备操作的model，比如`from src.model.Order import Order`，这样就把Order类导入了
+- 导入DBManager，`from src.model.BaseModel import DBManager`
+- 参考peewee-async[官方文档](https://peewee-async.readthedocs.io/en/latest/peewee_async/api.html#manager)
