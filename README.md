@@ -49,7 +49,7 @@ echo -e 'if [ -z "$BASH_VERSION" ]; then'\
 - 建议commit之前手动执行`black ./`
 ## 配置pre-commit
 - `pre-commit install`
-## 新建分支
+## Pull Request
 - 你对代码的任何更改都要建立新分支
 - 分支名命名规则：姓名首拼_日期_分支描述，如`zrf_0611_initProject`
 - 新建分支
@@ -59,12 +59,14 @@ echo -e 'if [ -z "$BASH_VERSION" ]; then'\
         - 新建分支 `git ckeckout -b zrf_0611_initProject`
         - 更改代码，add、commit
         - push时注意将本地分支推送到远端 `git push --set-upstream origin zrf_0611_initProject`
-        - 在gitee新建pull request
-        - 等待负责人评审
     - 方式二：远程新建
         - 在gitee上新建一个分支，注意以master为起点
         - `git fetch --all`
         -  `git checkout -b zrf_0611_initProject origin/zrf_0611_initProject`
+- 在gitee新建pull request
+    - 源分支选择你创建的分支
+    - 目标分支选择master
+- 等待负责人评审
 
 ## IDE
 - 推荐使用vscode
