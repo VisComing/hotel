@@ -65,16 +65,18 @@ class MainController:
         initAllRooms 在tbDevice表中创建所有的RoomID
         """
 
-        def int2RoomID(num: int):
-            id1 = str(num % 100).zfill(2)
-            num = num // 100
-            id2 = str(num % 100).zfill(2)
-            num = num // 100
-            id3 = str(num % 100).zfill(2)
-            return id3 + "-" + id2 + "-" + id1
-
-        for i in range(0, 999999):
-            roomID = int2RoomID(i)
+        roomIDList = [
+            "01-01-01",
+            "01-01-02",
+            "01-01-03",
+            "01-02-01",
+            "01-02-02",
+            "01-02-03",
+            "01-03-01",
+            "01-03-02",
+            "01-03-03",
+        ]
+        for roomID in roomIDList:
             try:
                 Device.create(roomID=roomID)
             except peewee.IntegrityError:
