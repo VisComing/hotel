@@ -20,6 +20,7 @@ class AdminController:
 
         Args:
             websocket (websockets): 连接对象
+            path: 不可省略该参数
         """
 
         async def recvMessage():
@@ -52,16 +53,18 @@ class AdminController:
                     logging.error("AdminController: rpc failed, no related function")
 
         # 并行执行接受消息函数，设置定时发送消息的handler
-        print("here")
-        tasks = [recvMessage(), self._sysSetHandler.run(websocket)]
+        tasks = [recvMessage(), self._roomStateUpdateHandler.run(websocket)]
         await asyncio.wait(tasks)
 
-    def setOrderHandler(self, handler: OrderHandler):
+    def setOrderHandler(self, handler: OrderHandler) -> None:
         """
-        setOrderHandler 接受外部注入的handler
+        setOrderHandler 接受外部注入的OrderHandler
 
         Args:
-            handler (OrderHandler): 外部注入的handler
+            handler (OrderHandler): 外部注入OrderHandler
+
+        Returns:
+            None: 返回空
         """
         self._orderHandle = handler
 
@@ -88,9 +91,8 @@ class AdminController:
 
     async def serve(self):
         """
-        serve 监听18000端口，处理连接
+        serve 监听端口，处理连接
         """
-        print("i am here")
         await websockets.serve(
             self.control, websocketsConfig.HOST, websocketsConfig.PORT
         )

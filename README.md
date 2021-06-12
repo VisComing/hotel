@@ -27,7 +27,6 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init --path)"
 ```
 ### 重启shell或者source
-- `source ~/.bashrc`
 - `source ~/.profile`
 ### 下载安装python3.8.5
 - `v=3.8.5;wget https://npm.taobao.org/mirrors/python/$v/Python-$v.tar.xz -P ~/.pyenv/cache/;pyenv install $v`
@@ -74,6 +73,7 @@ eval "$(pyenv init --path)"
 - 首先import你准备操作的model，比如`from src.model.Order import Order`，这样就把Order类导入了
 - 导入DBManager，`from src.model.BaseModel import DBManager`
 - 参考peewee-async[官方文档](https://peewee-async.readthedocs.io/en/latest/peewee_async/api.html#manager)
+- 参考peewee[官方文档](http://docs.peewee-orm.com/en/latest/peewee/querying.html#)
 
 ## 数据库
 - mysql

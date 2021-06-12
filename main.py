@@ -1,17 +1,16 @@
 import logging
-
 import asyncio
-
 from src.admin.BillHandler import BillHandler
 from src.admin.DetailedListHandler import DetailedListHandler
 from src.admin.OrderHandler import OrderHandler
 from src.admin.StatisticsHandler import StatisticsHandler
 from src.admin.SysConfigHandler import SysConfigHandler
-from src.admin.SysSetHandler import SysSetHandler
+from src.admin.RoomStateUpdateHandler import RoomStateUpdateHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.PaymentHandler import PaymentHandler
 from src.admin.AdminController import AdminController
 from src.model import *
+import peewee
 
 # 配置logging
 logging.basicConfig(
@@ -34,10 +33,11 @@ class MainController:
         self.adminController.setStatisticsHandler(StatisticsHandler())
         self.adminController.setSystemStatusHandler(SystemStatusHandler())
         self.adminController.setSysconfigHandler(SysConfigHandler())
-        self.adminController.setSysSetHandler(SysSetHandler())
+        self.adminController.setRoomStateUpdateHandler(RoomStateUpdateHandler())
         self.adminController.setPaymentHandler(PaymentHandler())
 
         self.createTables()
+        # self.initAllRooms()
 
     async def run(self) -> None:
         """
@@ -59,6 +59,28 @@ class MainController:
         TargetTem.create_table(True)
         UsageRecord.create_table(True)
         WindSpeed.create_table(True)
+
+    def initAllRooms(self) -> None:
+        """
+        initAllRooms 在tbDevice表中创建所有的RoomID
+        """
+
+        roomIDList = [
+            "01-01-01",
+            "01-01-02",
+            "01-01-03",
+            "01-02-01",
+            "01-02-02",
+            "01-02-03",
+            "01-03-01",
+            "01-03-02",
+            "01-03-03",
+        ]
+        for roomID in roomIDList:
+            try:
+                Device.create(roomID=roomID)
+            except peewee.IntegrityError:
+                pass
 
 
 # 程序入口，启动事件循环

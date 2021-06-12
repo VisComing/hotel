@@ -9,4 +9,15 @@ class StatisticsHandler:
 
     @method
     async def getStatistics(startTime: int, endTime: int) -> dict:
+        # TODO @Jun丶
+        """
+        getStatistics [summary]
+
+        Args:
+            startTime (int): [description]
+            endTime (int): [description]
+
+        Returns:
+            dict: [description]
+        """
         return None
