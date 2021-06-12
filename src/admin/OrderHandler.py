@@ -38,7 +38,9 @@ class OrderHandler:
         for order in orders:
             invalidRoomID = False
             if order.state == "using" or order.state == "unpaid":
-                raise ApiError("房间不可用", code=40103)
+                raise ApiError(
+                    "房间不可用", code=adminErrorCode.CREATE_ORDER_ROOM_UNAVAILABLE
+                )
         if invalidRoomID:
             raise ApiError("无效的房间 ID", code=adminErrorCode.CREATE_ORDER_INVALID_ROOM_ID)
 
