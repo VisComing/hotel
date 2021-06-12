@@ -7,7 +7,7 @@ from src.admin.DetailedListHandler import DetailedListHandler
 from src.admin.OrderHandler import OrderHandler
 from src.admin.StatisticsHandler import StatisticsHandler
 from src.admin.SysConfigHandler import SysConfigHandler
-from src.admin.SysSetHandler import SysSetHandler
+from src.admin.RoomStateUpdateHandler import RoomStateUpdateHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.PaymentHandler import PaymentHandler
 from src.admin.AdminController import AdminController
@@ -34,7 +34,7 @@ class MainController:
         self.adminController.setStatisticsHandler(StatisticsHandler())
         self.adminController.setSystemStatusHandler(SystemStatusHandler())
         self.adminController.setSysconfigHandler(SysConfigHandler())
-        self.adminController.setSysSetHandler(SysSetHandler())
+        self.adminController.setRoomStateUpdateHandler(RoomStateUpdateHandler())
         self.adminController.setPaymentHandler(PaymentHandler())
 
         self.createTables()
