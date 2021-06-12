@@ -1,4 +1,4 @@
-from src.model.BaseModel import BaseModel
+from src.model.BaseModel import BaseModel, DBManager
 from src.model.Bill import Bill
 from src.model.DetailListItem import DetailListItem
 from src.model.Device import Device
@@ -12,6 +12,7 @@ from src.model.WindSpeed import WindSpeed
 
 __all__ = [
     "BaseModel",
+    "DBManager",
     "Bill",
     "DetailListItem",
     "Device",
