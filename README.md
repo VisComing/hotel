@@ -27,7 +27,6 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init --path)"
 ```
 ### 重启shell或者source
-- `source ~/.bashrc`
 - `source ~/.profile`
 ### 下载安装python3.8.5
 - `v=3.8.5;wget https://npm.taobao.org/mirrors/python/$v/Python-$v.tar.xz -P ~/.pyenv/cache/;pyenv install $v`
