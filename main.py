@@ -1,7 +1,5 @@
 import logging
-
 import asyncio
-
 from src.admin.BillHandler import BillHandler
 from src.admin.DetailedListHandler import DetailedListHandler
 from src.admin.OrderHandler import OrderHandler
@@ -12,6 +10,7 @@ from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.PaymentHandler import PaymentHandler
 from src.admin.AdminController import AdminController
 from src.model import *
+import peewee
 
 # 配置logging
 logging.basicConfig(
@@ -38,6 +37,7 @@ class MainController:
         self.adminController.setPaymentHandler(PaymentHandler())
 
         self.createTables()
+        # self.initAllRooms()
 
     async def run(self) -> None:
         """
@@ -59,6 +59,26 @@ class MainController:
         TargetTem.create_table(True)
         UsageRecord.create_table(True)
         WindSpeed.create_table(True)
+
+    def initAllRooms(self) -> None:
+        """
+        initAllRooms 在tbDevice表中创建所有的RoomID
+        """
+
+        def int2RoomID(num: int):
+            id1 = str(num % 100).zfill(2)
+            num = num // 100
+            id2 = str(num % 100).zfill(2)
+            num = num // 100
+            id3 = str(num % 100).zfill(2)
+            return id3 + "-" + id2 + "-" + id1
+
+        for i in range(0, 999999):
+            roomID = int2RoomID(i)
+            try:
+                Device.create(roomID=roomID)
+            except peewee.IntegrityError:
+                pass
 
 
 # 程序入口，启动事件循环
