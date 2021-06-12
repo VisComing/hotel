@@ -1,11 +1,10 @@
 import logging
 from jsonrpcserver import method, async_dispatch as dispatch
-from src.model.Order import Order
-from src.model.BaseModel import DBManager
 import uuid
 from datetime import datetime
 from jsonrpcserver.exceptions import ApiError
 from src.settings import adminErrorCode
+from src.model import *
 
 
 class OrderHandler:
@@ -33,16 +32,15 @@ class OrderHandler:
         Returns:
             dict: {"orderID":'uuid'}
         """
-        orders = await DBManager.execute(Order.select().where(Order.roomID == roomID))
-        invalidRoomID = True
-        for order in orders:
-            invalidRoomID = False
-            if order.state == "using" or order.state == "unpaid":
-                raise ApiError(
-                    "房间不可用", code=adminErrorCode.CREATE_ORDER_ROOM_UNAVAILABLE
-                )
-        if invalidRoomID:
+        room = await DBManager.execute(Device.select().where(Device.roomID == roomID))
+        if len(room) == 0:
             raise ApiError("无效的房间 ID", code=adminErrorCode.CREATE_ORDER_INVALID_ROOM_ID)
+
+        orders = await DBManager.execute(
+            Order.select().where((Order.roomID == roomID) & (Order.state == "using"))
+        )
+        if len(orders) > 0:
+            raise ApiError("房间不可用", code=adminErrorCode.CREATE_ORDER_ROOM_UNAVAILABLE)
 
         orderID = str(uuid.uuid1())
         await DBManager.create(
