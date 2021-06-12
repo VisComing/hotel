@@ -9,5 +9,12 @@ class PaymentHandler:
             await websocket.send(str(response))
 
     @method
-    async def makePayment(orderID: str):
+    async def makePayment(orderID: str) -> None:
+        # TODO @Jun丶
+        """
+        makePayment [summary]
+
+        Args:
+            orderID (str): [description]
+        """
         pass

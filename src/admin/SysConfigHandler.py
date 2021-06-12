@@ -9,8 +9,25 @@ class SysConfigHandler:
 
     @method
     def getSysConfig() -> dict:
+        # TODO @Jun丶
+        """
+        getSysConfig [summary]
+
+        Returns:
+            dict: [description]
+        """
         return {}
 
     @method
     def setSysConfig(newConfigration: dict) -> None:
+        # TODO @Jun丶
+        """
+        setSysConfig [summary]
+
+        Args:
+            newConfigration (dict): [description]
+
+        Returns:
+            [type]: [description]
+        """
         return None
