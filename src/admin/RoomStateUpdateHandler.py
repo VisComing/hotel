@@ -25,16 +25,17 @@ class RoomStateUpdateHandler:
                 info = dict()
                 info["roomID"] = device.roomID
                 info["isStarted"] = device.isPower
+                windSpeedInt2Str = ["", "low", "medium", "high"]
                 # 如果空调没开，就不传其余字段
                 if device.isPower == True:
                     info["roomTemperature"] = device.currentTemperature
                     info["targetTemperature"] = device.targetTemperature
-                    info["windSpeed"] = device.windSpeed
+                    info["windSpeed"] = windSpeedInt2Str[device.windSpeed]
                     info["isSupplyingWind"] = device.isSupplyAir
                 infos.append(info)
             try:
                 await WebSocketsClient(websocket).notify(
-                    method_name="roomStateUpdate", infos=infos
+                    method_name="roomInformationUpdate", infos=infos
                 )
             except websockets.exceptions.ConnectionClosedError as e:
                 # 客户端断开连接异常
