@@ -1,6 +1,11 @@
 import logging
 from jsonrpcserver import method, async_dispatch as dispatch
 from src.model.Order import Order
+from src.model.BaseModel import DBManager
+import uuid
+from datetime import datetime
+from jsonrpcserver.exceptions import ApiError
+from src.settings import adminErrorCode
 
 
 class OrderHandler:
@@ -17,22 +22,42 @@ class OrderHandler:
 
     @method
     async def createOrder(userID: str, roomID: str) -> dict:
+        # TODO @adslppp
         """
         createOrder 创建订单
 
         Args:
-            userID (str): [description]
-            roomID (str): [description]
+            userID (str): 用户ID
+            roomID (str): 房间ID, 格式 01-23-45
 
         Returns:
-            dict: [description]
-            #请处理此函数的负责人根据协议填写函数注释以及函数
+            dict: {"orderID":'uuid'}
         """
-        logging.info("create order...")
-        return {"roomID": "zhou_rui_fa"}
+        orders = await DBManager.execute(Order.select().where(Order.roomID == roomID))
+        invalidRoomID = True
+        for order in orders:
+            invalidRoomID = False
+            if order.state == "using" or order.state == "unpaid":
+                raise ApiError("房间不可用", code=40103)
+        if invalidRoomID:
+            raise ApiError("无效的房间 ID", code=adminErrorCode.CREATE_ORDER_INVALID_ROOM_ID)
+
+        orderID = str(uuid.uuid1())
+        await DBManager.create(
+            Order,
+            userID=userID,
+            roomID=roomID,
+            orderID=orderID,
+            createdTime=datetime.now(),
+            finishedTime=datetime.now(),
+            state="using",
+        )
+
+        return {"orderID": orderID}
 
     @method
     async def fetchOrders(filter: dict) -> dict:
+        # TODO @Jun丶
         """
         fetchOrders [summary]
 
@@ -51,6 +76,7 @@ class OrderHandler:
 
     @method
     async def finishOrder(orderID: str) -> dict:
+        # TODO @Jun丶
         """
         finishOrder [summary]
 
