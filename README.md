@@ -51,7 +51,7 @@ eval "$(pyenv init --path)"
     - 方式一：本地新建分支
         - 确保自己在master分支上
         - 拉取最新的master
-        - 新建分支 `git ckeckout -b zrf_0611_initProject`
+        - 新建分支 `git checkout -b zrf_0611_initProject`
         - 更改代码，add、commit
         - push时注意将本地分支推送到远端 `git push --set-upstream origin zrf_0611_initProject`
     - 方式二：远程新建
