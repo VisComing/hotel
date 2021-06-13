@@ -27,30 +27,35 @@ class AdminController:
             """
             recvMessage 接受消息，根据消息内容分派给不同的handler
             """
-            async for message in websocket:
-                method = json.loads(message)["method"]
-                if (
-                    method == "createOrder"
-                    or method == "fetchOrders"
-                    or method == "finishOrder"
-                ):
-                    await self._orderHandle.run(message, websocket)
-                elif method == "getBill":
-                    await self._billHandler.run(message, websocket)
-                elif method == "getDetailedList":
-                    await self._detailedListHandler.run(message, websocket)
-                elif method == "getStatistics":
-                    await self._statisticsHandler.run(message, websocket)
-                elif (
-                    method == "getSystemStatus"
-                    or method == "startSystem"
-                    or method == "stopSystem"
-                ):
-                    await self._systemStatusHandler.run(message, websocket)
-                elif method == "getSysConfig" or method == "setSysConfig":
-                    await self._sysConfigHandler.run(message, websocket)
-                else:
-                    logging.error("AdminController: rpc failed, no related function")
+            try:
+                async for message in websocket:
+                    method = json.loads(message)["method"]
+                    if (
+                        method == "createOrder"
+                        or method == "fetchOrders"
+                        or method == "finishOrder"
+                    ):
+                        await self._orderHandle.run(message, websocket)
+                    elif method == "getBill":
+                        await self._billHandler.run(message, websocket)
+                    elif method == "getDetailedList":
+                        await self._detailedListHandler.run(message, websocket)
+                    elif method == "getStatistics":
+                        await self._statisticsHandler.run(message, websocket)
+                    elif (
+                        method == "getSystemStatus"
+                        or method == "startSystem"
+                        or method == "stopSystem"
+                    ):
+                        await self._systemStatusHandler.run(message, websocket)
+                    elif method == "getSysConfig" or method == "setSysConfig":
+                        await self._sysConfigHandler.run(message, websocket)
+                    else:
+                        logging.error(
+                            "AdminController: rpc failed, no related function"
+                        )
+            except websockets.exceptions.ConnectionClosedError as e:
+                logging.warning(e)
 
         # 并行执行接受消息函数，设置定时发送消息的handler
         tasks = [recvMessage(), self._roomStateUpdateHandler.run(websocket)]
