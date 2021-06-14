@@ -11,10 +11,10 @@ websocketsConfig = WebsocketsConfig()
 
 class MySQLDatabaseConfig(BaseSettings):
     DBNAME: str = "hotel"
-    HOST: str = "localhost"
-    PORT: int = 3306
-    USERNAME: str = "work"
-    PASSWORD: str = "password"
+    DBHOST: str = "localhost"
+    DBPORT: int = 3306
+    DBUSERNAME: str = "work"
+    DBPASSWORD: str = "password"
 
 
 mySQLDatabaseConfig = MySQLDatabaseConfig()
