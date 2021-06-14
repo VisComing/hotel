@@ -4,13 +4,12 @@ from peewee_async import Manager, MySQLDatabase
 import logging
 from src.settings import mySQLDatabaseConfig
 
-print(mySQLDatabaseConfig.USERNAME)
 db = MySQLDatabase(
     mySQLDatabaseConfig.DBNAME,
-    host=mySQLDatabaseConfig.HOST,
-    port=mySQLDatabaseConfig.PORT,
-    user=mySQLDatabaseConfig.USERNAME,
-    password=mySQLDatabaseConfig.PASSWORD,
+    host=mySQLDatabaseConfig.DBHOST,
+    port=mySQLDatabaseConfig.DBPORT,
+    user=mySQLDatabaseConfig.DBUSERNAME,
+    password=mySQLDatabaseConfig.DBPASSWORD,
     autocommit=True,
 )
 DBManager = Manager(db, loop=asyncio.get_event_loop())
