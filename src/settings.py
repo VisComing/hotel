@@ -2,8 +2,10 @@ from pydantic import BaseSettings
 
 
 class WebsocketsConfig(BaseSettings):
-    HOST: str = "0.0.0.0"
-    PORT: int = 18000
+    ADMINHOST: str = "0.0.0.0"
+    CLIENTHOST: str = "0.0.0.0"
+    ADMINPORT: int = 18000
+    CLIENTPORT: int = 18001
 
 
 websocketsConfig = WebsocketsConfig()

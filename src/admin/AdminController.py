@@ -99,5 +99,5 @@ class AdminController:
         serve 监听端口，处理连接
         """
         await websockets.serve(
-            self.control, websocketsConfig.HOST, websocketsConfig.PORT
+            self.control, websocketsConfig.ADMINHOST, websocketsConfig.ADMINPORT
         )
