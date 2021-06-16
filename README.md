@@ -86,6 +86,7 @@ eval "$(pyenv init --path)"
 
 ## 如何测试
 - 需要你自己写一个client，参考协议，向服务器发送一段数据，看服务器会输出什么
+- 发送一个notify
 ```python
 import asyncio
 import logging
@@ -93,13 +94,12 @@ import websockets
 from jsonrpcclient.clients.websockets_client import WebSocketsClient
 
 async def main():
-    async with websockets.connect("ws://localhost:18000") as ws:
+    async with websockets.connect("ws://localhost:18001") as ws:
 
         async def sendMsg():
-            response = await WebSocketsClient(ws).request(
-                "createOrder", userID="Alice", roomID="01-01-02"
+            await WebSocketsClient(ws).notify(
+                "PowerOn", roomID="01-01-02"
             )
-            logging.info(response.data.result)
         await sendMsg()
 
 asyncio.get_event_loop().run_until_complete(main())
