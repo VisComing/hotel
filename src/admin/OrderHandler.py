@@ -1,4 +1,5 @@
 import logging
+from os import stat
 from jsonrpcserver import method, async_dispatch as dispatch
 import uuid
 from datetime import datetime
@@ -90,6 +91,7 @@ class OrderHandler:
             od = {
                 "orderID": order.orderID,
                 "userID": order.userID,
+                "roomID": order.roomID.roomID,
                 "createdTime": int(time.mktime(order.createdTime.timetuple())),
                 "finishedTime": int(time.mktime(order.finishedTime.timetuple())),
                 "state": order.state,
@@ -111,4 +113,17 @@ class OrderHandler:
             dict: [description]
         """
         logging.info("finish order...")
+
+        order = await DBManager.execute(Order.select().where(Order.orderID == orderID))
+
+        if len(order) == 0:
+            raise ApiError("无效的订单ID", code=adminErrorCode.FINISH_ORDER_INVALID_ORDER_ID)
+        if order.state != "using":
+            raise ApiError(
+                "非法的订单状态", code=adminErrorCode.FINISH_ORDER_INVALID_ORDER_STATE
+            )
+
+        order.state = "unpaid"
+        order.finishedTime = datetime.now()
+
         return {}
