@@ -45,8 +45,8 @@ async def test_fetchOrder():
                 "orderID": "1",
                 "userID": "Alice",
                 "roomID": "01-01-01",
-                "createdTime": int(time.mktime(crtime.timetuple())),
-                "finishedTime": int(time.mktime(fitime.timetuple())),
+                "createdTime": round(time.mktime(crtime.timetuple())),
+                "finishedTime": round(time.mktime(fitime.timetuple())),
                 "state": "using",
             }
         ]
@@ -62,20 +62,18 @@ async def test_fetchOrder():
                 "orderID": "1",
                 "userID": "Alice",
                 "roomID": "01-01-01",
-                "createdTime": int(time.mktime(crtime.timetuple())),
-                "finishedTime": int(time.mktime(fitime.timetuple())),
+                "createdTime": round(time.mktime(crtime.timetuple())),
+                "finishedTime": round(time.mktime(fitime.timetuple())),
                 "state": "using",
             },
             {
                 "orderID": "2",
                 "userID": "Bob",
                 "roomID": "01-02-01",
-                "createdTime": int(time.mktime(crtime.timetuple())),
-                "finishedTime": int(time.mktime(fitime.timetuple())),
+                "createdTime": round(time.mktime(crtime.timetuple())),
+                "finishedTime": round(time.mktime(fitime.timetuple())),
                 "state": "using",
-            }
+            },
         ]
     }
     assert res == ans
-
-
