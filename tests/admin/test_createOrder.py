@@ -18,7 +18,5 @@ async def test_createOrder():
     # createOrder应该会成功，返回之中包含orderID
     assert "orderID" in res
     # 同时，可以从数据库中查出该orderID
-    res = await DBManager.execute(
-        Order().select().where(Order.orderID == res["orderID"])
-    )
+    res = await DBManager.execute(Order.select().where(Order.orderID == res["orderID"]))
     assert len(res) == 1

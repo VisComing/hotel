@@ -111,5 +111,8 @@ asyncio.get_event_loop().run_until_complete(main())
 - 测试框架，pytest `pip3 install pytest-asyncio`
 - 测试文件命名，以`test_`开头
 - 可以参考我已经写好的`test_createOrder.py`
-- 运行测试，如果使用的是vscode的话那么可以在左侧选项栏中找到测试。
+- 运行测试，如果使用的是vscode的话那么可以在左侧选项栏中找到测试(前提是你安装了python插件)。
 - 也可以在命令行中执行, 输入`pytest`就会自动执行测试
+- 如果测试过程中需要对数据库操作，那么新建一个数据库，名字为`mock_hotel`
+- test目录下`Utils.py`有个`initDB`函数,该函数会新建表，删除表里面的内容，并且初始化几个Device
+- 如果使用Windows系统，多次执行createTables函数(initDB中调用)会报错，那么只执行一次就可以了，然后你把这个函数注释掉
