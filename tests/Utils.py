@@ -45,7 +45,10 @@ def initAllRooms() -> None:
 
 
 def initDB():
-    createTables()
+    try:
+        createTables()
+    except Exception as e:
+        pass
     WindSpeed.delete().execute()
     UsageRecord.delete().execute()
     TargetTem.delete().execute()

@@ -116,3 +116,4 @@ asyncio.get_event_loop().run_until_complete(main())
 - 如果测试过程中需要对数据库操作，那么新建一个数据库，名字为`mock_hotel`
 - test目录下`Utils.py`有个`initDB`函数,该函数会新建表，删除表里面的内容，并且初始化几个Device
 - 如果使用Windows系统，多次执行createTables函数(initDB中调用)会报错，那么只执行一次就可以了，然后你把这个函数注释掉
+- 如果vscode左侧没有显示测试的拓展，可以试试按`ctrl + shift + p`，输入`configure tests`，配置一下python测试框架，选择pytest
