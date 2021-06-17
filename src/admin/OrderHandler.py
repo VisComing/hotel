@@ -1,10 +1,12 @@
 import logging
+from os import stat
 from jsonrpcserver import method, async_dispatch as dispatch
 import uuid
 from datetime import datetime
 from jsonrpcserver.exceptions import ApiError
 from src.settings import adminErrorCode
 from src.model import *
+import time
 
 
 class OrderHandler:
@@ -59,20 +61,44 @@ class OrderHandler:
     async def fetchOrders(filter: dict) -> dict:
         # TODO @Jun丶
         """
-        fetchOrders [summary]
+        fetchOrders 获取订单列表
 
         Args:
-            filter (dict): [description]
+            filter (obj): 过滤条件
+                userID (str): 用户ID
+                roomID (str): 房间ID
+                state (str): 订单状态 (`using` 代表「使用中」，`unpaid` 代表「未付款」，`completed` 代表「已完成」)
 
         Returns:
-            dict: [description]
+            dict: {"orderID", "userID", "roomID", "createdTime", "finishedTime", "state"}
         """
         userID = filter["userID"] if "userID" in filter else None
         roomID = filter["roomID"] if "roomID" in filter else None
         state = filter["state"] if "state" in filter else None
 
         logging.info("fetch orders...")
-        return {}
+
+        condition = True
+        if userID:
+            condition = condition & (Order.userID == userID)
+        if roomID:
+            condition = condition & (Order.roomID == roomID)
+        if state:
+            condition = condition & (Order.state == state)
+        orders = await DBManager.execute(Order.select().where(condition))
+        ods = []
+        for order in orders:
+            od = {
+                "orderID": order.orderID,
+                "userID": order.userID,
+                "roomID": order.roomID.roomID,
+                "createdTime": int(time.mktime(order.createdTime.timetuple())),
+                "finishedTime": int(time.mktime(order.finishedTime.timetuple())),
+                "state": order.state,
+            }
+            ods.append(od)
+
+        return {"orders": ods}
 
     @method
     async def finishOrder(orderID: str) -> dict:
@@ -87,4 +113,17 @@ class OrderHandler:
             dict: [description]
         """
         logging.info("finish order...")
+
+        order = await DBManager.execute(Order.select().where(Order.orderID == orderID))
+
+        if len(order) == 0:
+            raise ApiError("无效的订单ID", code=adminErrorCode.FINISH_ORDER_INVALID_ORDER_ID)
+        if order.state != "using":
+            raise ApiError(
+                "非法的订单状态", code=adminErrorCode.FINISH_ORDER_INVALID_ORDER_STATE
+            )
+
+        order.state = "unpaid"
+        order.finishedTime = datetime.now()
+
         return {}
