@@ -13,6 +13,7 @@ class Device(BaseModel):
     isAskAir = BooleanField()
     isSupplyAir = BooleanField()
     cost = FloatField()
+    supplyTime = IntegerField()
 
     class Meta:
         table_name = "tbDevice"
