@@ -21,12 +21,22 @@ async def test_fetchOrder():
         Order,
         userID="Alice",
         roomID="01-01-01",
-        orderID=1,
+        orderID="1",
+        createdTime=crtime,
+        finishedTime=fitime,
+        state="using",
+    )
+    await DBManager.create(
+        Order,
+        userID="Bob",
+        roomID="01-02-01",
+        orderID="2",
         createdTime=crtime,
         finishedTime=fitime,
         state="using",
     )
 
+    # 测试完整条件获取订单
     filter = {"userID": "Alice", "roomID": "01-01-01", "state": "using"}
     res = await OrderHandler.fetchOrders(filter)
     ans = {
@@ -41,5 +51,31 @@ async def test_fetchOrder():
             }
         ]
     }
-
     assert res == ans
+
+    # 测试无条件获取订单
+    filter = {}
+    res = await OrderHandler.fetchOrders(filter)
+    ans = {
+        "orders": [
+            {
+                "orderID": "1",
+                "userID": "Alice",
+                "roomID": "01-01-01",
+                "createdTime": int(time.mktime(crtime.timetuple())),
+                "finishedTime": int(time.mktime(fitime.timetuple())),
+                "state": "using",
+            },
+            {
+                "orderID": "2",
+                "userID": "Bob",
+                "roomID": "01-02-01",
+                "createdTime": int(time.mktime(crtime.timetuple())),
+                "finishedTime": int(time.mktime(fitime.timetuple())),
+                "state": "using",
+            }
+        ]
+    }
+    assert res == ans
+
+
