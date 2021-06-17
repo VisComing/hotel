@@ -104,3 +104,12 @@ async def main():
 
 asyncio.get_event_loop().run_until_complete(main())
 ```
+
+## 单元测试
+- 单元测试是必须的
+- 你每完成一个函数，都要对该函数进行单测
+- 测试框架，pytest `pip3 install pytest-asyncio`
+- 测试文件命名，以`test_`开头
+- 可以参考我已经写好的`test_createOrder.py`
+- 运行测试，如果使用的是vscode的话那么可以在左侧选项栏中找到测试。
+- 也可以在命令行中执行, 输入`pytest`就会自动执行测试
