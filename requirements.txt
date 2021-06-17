@@ -8,3 +8,4 @@ pre-commit==2.13.0
 black==21.5b2
 aiomysql==0.0.21
 pydantic==1.8.2
+pytest-asyncio==0.15.1
