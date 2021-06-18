@@ -38,15 +38,26 @@ async def test_fetchOrder():
 
     # 测试完整条件获取订单
     filter = {"userID": "Alice", "roomID": "01-01-01", "state": "using"}
-    res = await OrderHandler.fetchOrders(filter)
+    result = await OrderHandler.fetchOrders(filter)
+    result = result["orders"]
+    assert len(result) == 1
+    i = result[0]
+    res = {
+        "orders": [
+            {
+                "orderID": i["orderID"],
+                "userID": i["userID"],
+                "roomID": i["roomID"],
+                "state": i["state"],
+            }
+        ]
+    }
     ans = {
         "orders": [
             {
                 "orderID": "1",
                 "userID": "Alice",
                 "roomID": "01-01-01",
-                "createdTime": round(time.mktime(crtime.timetuple())),
-                "finishedTime": round(time.mktime(fitime.timetuple())),
                 "state": "using",
             }
         ]
@@ -55,23 +66,30 @@ async def test_fetchOrder():
 
     # 测试无条件获取订单
     filter = {}
-    res = await OrderHandler.fetchOrders(filter)
+    result = await OrderHandler.fetchOrders(filter)
+    result = result["orders"]
+    r = list()
+    for i in result:
+        res = {
+            "orderID": i["orderID"],
+            "userID": i["userID"],
+            "roomID": i["roomID"],
+            "state": i["state"],
+        }
+        r.append(res)
+    res = {"orders": r}
     ans = {
         "orders": [
             {
                 "orderID": "1",
                 "userID": "Alice",
                 "roomID": "01-01-01",
-                "createdTime": round(time.mktime(crtime.timetuple())),
-                "finishedTime": round(time.mktime(fitime.timetuple())),
                 "state": "using",
             },
             {
                 "orderID": "2",
                 "userID": "Bob",
                 "roomID": "01-02-01",
-                "createdTime": round(time.mktime(crtime.timetuple())),
-                "finishedTime": round(time.mktime(fitime.timetuple())),
                 "state": "using",
             },
         ]
