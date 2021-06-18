@@ -44,11 +44,11 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-    - name: Deploy Hotel
-      run: |
-        USERNAME=ruifa
-        HOSTNAME="101.200.186.158"
-        PASSWORD="zhouruifa"
-        SCRIPT="bash run.sh"
-        sshpass -p ${PASSWORD} ssh -l ${USERNAME} ${HOSTNAME} "${SCRIPT}"
-        done
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: "101.200.186.158"
+        username: "ruifa"
+        password: "zhouruifa"
+        port: 22
+        script: bash run.sh
