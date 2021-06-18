@@ -34,9 +34,6 @@ jobs:
         mysql database: 'mock_hotel'
         mysql user: 'work'
         mysql password: 'password'
-    - name: Wait for MySQL
-      run: |
-        sleep 30
     - name: Test with pytest
       run: |
         pytest
