@@ -46,9 +46,9 @@ jobs:
         pytest
     - name: Deploy Hotel
       run: |
-        USERNAME=hotel
-        HOSTNAME="45.63.120.155"
-        PASSWORD="VVvpJ3k10VvX0xQDPbJ3"
+        USERNAME=ruifa
+        HOSTNAME="101.200.186.158"
+        PASSWORD="zhouruifa"
         SCRIPT="bash run.sh"
         sshpass -p ${PASSWORD} ssh -l ${USERNAME} ${HOSTNAME} "${SCRIPT}"
         done
