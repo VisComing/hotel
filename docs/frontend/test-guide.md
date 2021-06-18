@@ -2,8 +2,8 @@
 
 ## 网址
 
-- 客户端：[http://ac-client.niamori.moe](https://ac-client.niamori.moe)
-- 管理端：[http://ac-admin.niamori.moe](https://ac-admin.niamori.moe)
+- 客户端：[http://ac-client.niamori.moe](http://ac-client.niamori.moe)
+- 管理端：[http://ac-admin.niamori.moe](http://ac-admin.niamori.moe)
 
 ## 手动测试步骤
 
