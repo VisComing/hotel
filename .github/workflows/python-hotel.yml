@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install sshpass
+      run: sudo apt-get install sshpass
     - name: Set up Python 3.8.5
       uses: actions/setup-python@v2
       with:
@@ -42,3 +44,11 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: Deploy Hotel
+      run: |
+        USERNAME=hotel
+        HOSTNAME="45.63.120.155"
+        PASSWORD="VVvpJ3k10VvX0xQDPbJ3"
+        SCRIPT="bash run.sh"
+        sshpass -p ${PASSWORD} ssh -l ${USERNAME} ${HOSTNAME} "${SCRIPT}"
+        done
