@@ -36,8 +36,11 @@ class MainController:
         self.adminController.setRoomStateUpdateHandler(RoomStateUpdateHandler())
         self.adminController.setPaymentHandler(PaymentHandler())
 
-        self.createTables()
-        # self.initAllRooms()
+        try:
+            self.createTables()
+        except Exception as e:
+            logging.warn(e)
+        self.initAllRooms()
 
     async def run(self) -> None:
         """
