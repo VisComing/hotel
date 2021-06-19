@@ -62,6 +62,7 @@ class MainController:
         TargetTem.create_table(True)
         UsageRecord.create_table(True)
         WindSpeed.create_table(True)
+        Settings.create_table(True)
 
     def initAllRooms(self) -> None:
         """
