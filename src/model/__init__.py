@@ -9,6 +9,7 @@ from src.model.Scheduling import Scheduling
 from src.model.TargetTem import TargetTem
 from src.model.UsageRecord import UsageRecord
 from src.model.WindSpeed import WindSpeed
+from src.model.Settings import Settings
 
 __all__ = [
     "BaseModel",
@@ -23,4 +24,5 @@ __all__ = [
     "TargetTem",
     "UsageRecord",
     "WindSpeed",
+    "Settings",
 ]
