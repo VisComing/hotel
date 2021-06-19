@@ -36,8 +36,11 @@ class MainController:
         self.adminController.setRoomStateUpdateHandler(RoomStateUpdateHandler())
         self.adminController.setPaymentHandler(PaymentHandler())
 
-        self.createTables()
-        # self.initAllRooms()
+        try:
+            self.createTables()
+        except Exception as e:
+            logging.warn(e)
+        self.initAllRooms()
 
     async def run(self) -> None:
         """
@@ -59,6 +62,7 @@ class MainController:
         TargetTem.create_table(True)
         UsageRecord.create_table(True)
         WindSpeed.create_table(True)
+        Settings.create_table(True)
 
     def initAllRooms(self) -> None:
         """

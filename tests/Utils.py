@@ -1,3 +1,4 @@
+import logging
 import os
 
 os.environ["DBNAME"] = "mock_hotel"
@@ -19,6 +20,7 @@ def createTables() -> None:
     TargetTem.create_table(True)
     UsageRecord.create_table(True)
     WindSpeed.create_table(True)
+    Settings.create_table(True)
 
 
 def initAllRooms() -> None:
@@ -48,7 +50,7 @@ def initDB():
     try:
         createTables()
     except Exception as e:
-        pass
+        logging.warn(e)
     WindSpeed.delete().execute()
     UsageRecord.delete().execute()
     TargetTem.delete().execute()
