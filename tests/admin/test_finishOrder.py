@@ -1,7 +1,7 @@
 import pytest
 import tests.Utils as Utils
-from datetime import datetime
 
+from datetime import datetime
 from src.admin.OrderHandler import OrderHandler
 from src.model import *
 from jsonrpcserver.exceptions import ApiError
@@ -56,7 +56,7 @@ async def test_finishOrder():
         highRate=3,
         maxNumOfClientsToServe=3,
     )
-
+    
     await OrderHandler.finishOrder(orderID="1")
     res = await DBManager.execute(Order.select().where(Order.orderID == "1"))
     orders = list(res)
@@ -66,7 +66,7 @@ async def test_finishOrder():
     # 测试订单状态已被修改
     assert order.state == "unpaid"
     # 测试完成时间被修改
-    assert order.finishedTime > time
+    assert order.finishedTime != time
     # 测试使用记录被存入详单
     res = await DBManager.execute(
             DetailListItem.select().where(DetailListItem.orderID == "1")
