@@ -92,8 +92,8 @@ class OrderHandler:
                 "orderID": order.orderID,
                 "userID": order.userID,
                 "roomID": order.roomID.roomID,
-                "createdTime": int(time.mktime(order.createdTime.timetuple())),
-                "finishedTime": int(time.mktime(order.finishedTime.timetuple())),
+                "createdTime": round(time.mktime(order.createdTime.timetuple())),
+                "finishedTime": round(time.mktime(order.finishedTime.timetuple())),
                 "state": order.state,
             }
             ods.append(od)
@@ -114,16 +114,79 @@ class OrderHandler:
         """
         logging.info("finish order...")
 
-        order = await DBManager.execute(Order.select().where(Order.orderID == orderID))
+        result = await DBManager.execute(Order.select().where(Order.orderID == orderID))
 
-        if len(order) == 0:
+        orders = list(result)
+        if len(orders) == 0:
             raise ApiError("无效的订单ID", code=adminErrorCode.FINISH_ORDER_INVALID_ORDER_ID)
+
+        order = orders[0]
         if order.state != "using":
             raise ApiError(
                 "非法的订单状态", code=adminErrorCode.FINISH_ORDER_INVALID_ORDER_STATE
             )
 
-        order.state = "unpaid"
-        order.finishedTime = datetime.now()
+        # 修改订单状态和完成时间
+        await DBManager.execute(
+            Order.update({Order.state: "unpaid"}).where(Order.orderID == orderID)
+        )
+        await DBManager.execute(
+            Order.update({Order.finishedTime: datetime.now()}).where(
+                Order.orderID == orderID
+            )
+        )
 
-        return {}
+        # 将使用记录内的数据存入详单
+        totalCost = 0.0
+        records = await DBManager.execute(
+            UsageRecord.select().where(UsageRecord.orderID == orderID)
+        )
+        for record in records:
+            await DBManager.create(
+                DetailListItem,
+                orderID=record.orderID.orderID,
+                detailListID=str(uuid.uuid1()),
+                startTime=record.startTime,
+                endTime=record.endTime,
+                WindSpeed=record.windSpeed,
+                cost=record.cost,
+                billingRate=record.billingRate,
+            )
+            # 计算总费用
+            totalCost += record.cost
+
+        # 插入一条账单
+        billID = str(uuid.uuid1())
+        await DBManager.create(
+            Bill,
+            orderID=orderID,
+            BillID=billID,
+            totalCost=totalCost,
+        )
+
+        # 将order对应的room状态修改为缺省值
+        # 获取到该订单对应的房间号
+        roomOrder = await DBManager.execute(
+            Order.select().where(Order.orderID == orderID)
+        )
+        roomOrder = list(roomOrder)
+        roomOrder = roomOrder[0]
+
+        # 获取缺省温度
+        settings = await DBManager.execute(Settings.select())
+        settings = list(settings)
+        settings = settings[0]
+
+        await DBManager.execute(
+            Device.update(
+                isPower=False,
+                targetTemperature=settings.defaultTemperature,
+                currentTemperature=settings.defaultTemperature,
+                windSpeed=1,
+                isAskAir=False,
+                isSupplyAir=False,
+                cost=0,
+                supplyTime=0,
+            ).where(Device.roomID == roomOrder.roomID.roomID)
+        )
+        return None
