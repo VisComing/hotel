@@ -1,5 +1,11 @@
 import logging
+from jsonrpcserver.exceptions import ApiError
+
+from peewee_async import select
+from src.model.BaseModel import DBManager
 from jsonrpcserver import method, async_dispatch as dispatch
+from src.model import *
+from src.settings import adminErrorCode
 
 
 class BillHandler:
@@ -18,6 +24,21 @@ class BillHandler:
             orderID (str): 订单ID
 
         Returns:
-            dict: 返回值请参考协议
+            dict: {"orderID", "billID", "totalCost"}
         """
-        return {"orderID": "123", "billID": "123", "totalCost": "123"}
+
+        logging.info("get bill...")
+
+        orders = await DBManager.execute(Order.select().where(Order.orderID == orderID))
+        orders = list(orders)
+        if len(orders) == 0:
+            raise ApiError("无效的订单ID", code=adminErrorCode.GET_BILL_INVALID_ORDER_ID)
+        order = orders[0]
+        if order.state == "using":
+            raise ApiError("非法的订单状态", code=adminErrorCode.GET_BILL_INVALID_ORDER_STATE)
+
+        bills = await DBManager.execute(Bill.select().where(Bill.orderID == orderID))
+        bills = list(bills)
+        bill = bills[0]
+
+        return {"orderID": orderID, "billID": bill.billID, "totalCost": bill.totalCost}
