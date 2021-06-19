@@ -42,6 +42,20 @@ async def test_finishOrder():
         cost=1,
         billingRate="1",
     )
+    await DBManager.create(
+        Settings,
+        temperatureControlMode="heating",
+        minHeatTemperature=18,
+        maxHeatTemperature=26,
+        minCoolTemperature=26,
+        maxCoolTemperature=30,
+        defaultTemperature=26,
+        electricityPrice=1,
+        lowRate=1,
+        midRate=2,
+        highRate=3,
+        maxNumOfClientsToServe=3,
+    )
 
     await OrderHandler.finishOrder(orderID="1")
     res = await DBManager.execute(Order.select().where(Order.orderID == "1"))
