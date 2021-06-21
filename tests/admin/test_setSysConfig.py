@@ -62,3 +62,4 @@ async def test_setSysConfig():
     with pytest.raises(ApiError, match="禁止在运行时设置系统配置") as excinfo:
         await SysConfigHandler.setSysConfig(newConfigration)
     assert excinfo.type == ApiError
+    
