@@ -1,4 +1,8 @@
+import logging
 from jsonrpcserver import method, async_dispatch as dispatch
+from src.settings import adminErrorCode
+from jsonrpcserver.exceptions import ApiError
+from src.model import *
 
 
 class SysConfigHandler:
@@ -8,26 +12,121 @@ class SysConfigHandler:
             await websocket.send(str(response))
 
     @method
-    def getSysConfig() -> dict:
+    async def getSysConfig() -> dict:
         # TODO @Jun丶
         """
-        getSysConfig [summary]
+        getSysConfig 获取系统配置
 
         Returns:
-            dict: [description]
+            dict:
+            {
+                "temperatureControlMode": 温控模式 (`heating` 表示制热，`cooling` 表示制冷),
+                "targetTemperatureRange": {
+                "heating": {
+                    "min": 最低温度 (单位：摄氏度),
+                    "max": 最高温度 (单位：摄氏度)
+                },
+                "cooling": {
+                    "min": 最低温度 (单位：摄氏度),
+                    "max": 最高温度 (单位：摄氏度)
+                }
+                },
+                "defaultTemperature": 缺省温度 (单位：摄氏度),
+                "electricityPrice": 计费标准 (单位：元/度),
+                "electricityConsumptionRate": {
+                    "low": 低风速下的耗电速率 (单位：度/分钟),
+                    "medium": 中风速下的耗电速率 (单位：度/分钟),
+                    "high": 高风速下的耗电速率 (单位：度/分钟)
+                },
+                "maxNumOfClientsToServe": 最大可服务对象数
+            }
         """
-        return {}
+        logging.info("get system config...")
+
+        # 使用get有问题，用select代替
+        settings = await DBManager.execute(Settings.select())
+        settings = list(settings)
+        settings = settings[0]
+
+        result = {
+            "temperatureControlMode": settings.temperatureControlMode,
+            "targetTemperatureRange": {
+                "heating": {
+                    "min": settings.minHeatTemperature,
+                    "max": settings.maxHeatTemperature,
+                },
+                "cooling": {
+                    "min": settings.minCoolTemperature,
+                    "max": settings.maxCoolTemperature,
+                },
+            },
+            "defaultTemperature": settings.defaultTemperature,
+            "electricityPrice": settings.electricityPrice,
+            "electricityConsumptionRate": {
+                "low": settings.lowRate,
+                "medium": settings.midRate,
+                "high": settings.highRate,
+            },
+            "maxNumOfClientsToServe": settings.maxNumOfClientsToServe,
+        }
+        return result
 
     @method
-    def setSysConfig(newConfigration: dict) -> None:
+    async def setSysConfig(newConfigration: dict) -> None:
         # TODO @Jun丶
         """
-        setSysConfig [summary]
+        setSysConfig 设置系统配置
 
         Args:
-            newConfigration (dict): [description]
+            newConfigration (dict):
+            {
+                "temperatureControlMode": 温控模式 (`heating` 表示制热，`cooling` 表示制冷),
+                "targetTemperatureRange": {
+                "heating": {
+                    "min": 最低温度 (单位：摄氏度),
+                    "max": 最高温度 (单位：摄氏度)
+                },
+                "cooling": {
+                    "min": 最低温度 (单位：摄氏度),
+                    "max": 最高温度 (单位：摄氏度)
+                }
+                },
+                "defaultTemperature": 缺省温度 (单位：摄氏度),
+                "electricityPrice": 计费标准 (单位：元/度),
+                "electricityConsumptionRate": {
+                    "low": 低风速下的耗电速率 (单位：度/分钟),
+                    "medium": 中风速下的耗电速率 (单位：度/分钟),
+                    "high": 高风速下的耗电速率 (单位：度/分钟)
+                },
+                "maxNumOfClientsToServe": 最大可服务对象数
+            }
+
 
         Returns:
-            [type]: [description]
+            null
         """
+        logging.info("set system config...")
+
+        await DBManager.create(
+            Settings,
+            temperatureControlMode=newConfigration["temperatureControlMode"],
+            minHeatTemperature=newConfigration["targetTemperatureRange"]["heating"][
+                "min"
+            ],
+            maxHeatTemperature=newConfigration["targetTemperatureRange"]["heating"][
+                "max"
+            ],
+            minCoolTemperature=newConfigration["targetTemperatureRange"]["cooling"][
+                "min"
+            ],
+            maxCoolTemperature=newConfigration["targetTemperatureRange"]["cooling"][
+                "max"
+            ],
+            defaultTemperature=newConfigration["defaultTemperature"],
+            electricityPrice=newConfigration["electricityPrice"],
+            lowRate=newConfigration["electricityConsumptionRate"]["low"],
+            midRate=newConfigration["electricityConsumptionRate"]["medium"],
+            highRate=newConfigration["electricityConsumptionRate"]["high"],
+            maxNumOfClientsToServe=newConfigration["maxNumOfClientsToServe"],
+        )
         return None
