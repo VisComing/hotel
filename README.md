@@ -33,8 +33,8 @@ eval "$(pyenv init --path)"
 ### 使python3.8.5生效
 - `pyenv global 3.8.5`
 ## 克隆项目
-- `git clone git@gitee.com:adslppp/hotel-air-conditioner.git`
-- `cd hotel-air-conditioner`
+- `git clone git@github.com:VisComing/hotel.git`
+- `cd hotel`
 ## 安装`requirementlists`
 - `pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple`
 ## git钩子
