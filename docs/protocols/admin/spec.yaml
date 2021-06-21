@@ -1,7 +1,7 @@
 nyarpc: 0.0.1-alpha
 
 info:
-  version: 0.0.3-alpha
+  version: 0.0.4-alpha
   title: 分布式空调系统管理后台通信协议
 
 components:
@@ -302,14 +302,6 @@ methods:
         name: INVALID_ORDER_STATE
         description: 指定订单的状态不允许进行「结束」操作
         message: 非法的订单状态
-        data:
-          schema:
-            type: object
-            required:
-              - state
-            properties:
-              state:
-                $ref: '#/components/schemas/Order.State'
 
   getBill:
     description: 获取「账单」
@@ -334,14 +326,6 @@ methods:
         name: INVALID_ORDER_STATE
         description: 指定订单的状态不允许进行「获取账单」操作
         message: 非法的订单状态
-        data:
-          schema:
-            type: object
-            required:
-              - state
-            properties:
-              state:
-                $ref: '#/components/schemas/Order.State'
 
   makePayment:
     description: 为账单付款
@@ -365,14 +349,6 @@ methods:
         name: INVALID_ORDER_STATE
         description: 指定订单的状态不允许进行「付款」操作
         message: 非法的订单状态
-        data:
-          schema:
-            type: object
-            required:
-              - state
-            properties:
-              state:
-                $ref: '#/components/schemas/Order.State'
 
   getDetailedList:
     description: 获取「详单」
@@ -397,14 +373,6 @@ methods:
         name: INVALID_ORDER_STATE
         description: 指定订单的状态不允许进行「获取详单」操作
         message: 非法的订单状态
-        data:
-          schema:
-            type: object
-            required:
-              - state
-            properties:
-              state:
-                $ref: '#/components/schemas/Order.State'
 
   getStatistics:
     description: 获取统计报表
