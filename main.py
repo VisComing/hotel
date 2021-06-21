@@ -42,6 +42,10 @@ class MainController:
             logging.warn(e)
         self.initAllRooms()
 
+        settings = DBManager.execute(Settings.select())
+        if len(settings) == 0:
+            self.initSettings()
+            
     async def run(self) -> None:
         """
         run 运行adminController以及clientController
@@ -86,6 +90,23 @@ class MainController:
             except peewee.IntegrityError:
                 pass
 
+    def initSettings(self) -> None:
+        """
+        initSettings 在第一次建立数据库时需要初始化系统设置
+        """
+        Settings.create(
+            temperatureControlMode="heating",
+            minHeatTemperature=18,
+            maxHeatTemperature=26,
+            minCoolTemperature=26,
+            maxCoolTemperature=30,
+            defaultTemperature=26,
+            electricityPrice=1,
+            lowRate=1,
+            midRate=2,
+            highRate=3,
+            maxNumOfClientsToServe=3,
+        )
 
 # 程序入口，启动事件循环
 if __name__ == "__main__":
