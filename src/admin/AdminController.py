@@ -36,6 +36,8 @@ class AdminController:
                         or method == "finishOrder"
                     ):
                         await self._orderHandle.run(message, websocket)
+                    elif method == "makePayment":
+                        await self._sysPaymentHandler.run(message, websocket)
                     elif method == "getBill":
                         await self._billHandler.run(message, websocket)
                     elif method == "getDetailedList":
@@ -58,8 +60,9 @@ class AdminController:
                 logging.warning(e)
 
         # 并行执行接受消息函数，设置定时发送消息的handler
-        tasks = [recvMessage(), self._roomStateUpdateHandler.run(websocket)]
-        await asyncio.wait(tasks)
+        await recvMessage()
+        # tasks = [recvMessage(), self._roomStateUpdateHandler.run(websocket)]
+        # await asyncio.wait(tasks)
 
     def setOrderHandler(self, handler: OrderHandler) -> None:
         """
