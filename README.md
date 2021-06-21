@@ -117,3 +117,8 @@ asyncio.get_event_loop().run_until_complete(main())
 - test目录下`Utils.py`有个`initDB`函数,该函数会新建表，删除表里面的内容，并且初始化几个Device
 - 如果使用Windows系统，多次执行createTables函数(initDB中调用)会报错，那么只执行一次就可以了，然后你把这个函数注释掉
 - 如果vscode左侧没有显示测试的拓展，可以试试按`ctrl + shift + p`，输入`configure tests`，配置一下python测试框架，选择pytest
+
+## 持续交付
+- IP：101.200.186.158
+- admin端口：18000
+- client端口：18001
