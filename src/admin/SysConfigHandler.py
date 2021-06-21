@@ -3,6 +3,7 @@ from jsonrpcserver import method, async_dispatch as dispatch
 from src.settings import adminErrorCode
 from jsonrpcserver.exceptions import ApiError
 from src.model import *
+from src.admin.SystemStatusHandler import SystemStatusHandler
 
 
 class SysConfigHandler:
@@ -106,6 +107,12 @@ class SysConfigHandler:
             null
         """
         logging.info("set system config...")
+
+        if SystemStatusHandler.status == True:
+            raise ApiError(
+                "禁止在运行时设置系统配置",
+                code=adminErrorCode.SET_SYS_CONFIG_PROHIBIT_CONFIGURATION_AT_RUNTIME,
+            )
 
         await DBManager.create(
             Settings,
