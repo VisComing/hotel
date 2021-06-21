@@ -13,6 +13,7 @@ async def test_systemStatus():
     """
     # 初始化数据库，该操作首先会清空数据库表，然后初始化几个Device
     Utils.initDB()
+    SystemStatusHandler.status = False
     # 首先获取系统状态，初始时为False
     status = await SystemStatusHandler.getSystemStatus()
     status = status["started"]
