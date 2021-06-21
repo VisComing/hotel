@@ -84,7 +84,7 @@ eval "$(pyenv init --path)"
 - [参考文档](https://beau.click/jsonrpc/websockets)
 - [如何返回错误](https://jsonrpcserver.readthedocs.io/en/latest/api.html#errors)
 
-~~## 如何测试~~
+## ~~如何测试~~
 - 需要你自己写一个client，参考协议，向服务器发送一段数据，看服务器会输出什么
 - 发送一个notify
 ```python
