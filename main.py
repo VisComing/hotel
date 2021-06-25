@@ -9,6 +9,11 @@ from src.admin.RoomStateUpdateHandler import RoomStateUpdateHandler
 from src.admin.SystemStatusHandler import SystemStatusHandler
 from src.admin.PaymentHandler import PaymentHandler
 from src.admin.AdminController import AdminController
+
+from src.client.ClientHandler import ClientHandler
+from src.client.DeviceHandler import DeviceHandler
+from src.client.ClientController import ClientController
+
 from src.model import *
 import peewee
 
@@ -25,6 +30,7 @@ class MainController:
         """
         __init__ MainCOntroller构造函数，将各种handler注入到controller中
         """
+        self.clientController = ClientController()
         self.adminController = AdminController()
         # 依赖注入
         self.adminController.setOrderHandler(OrderHandler())
@@ -35,7 +41,9 @@ class MainController:
         self.adminController.setSysconfigHandler(SysConfigHandler())
         self.adminController.setRoomStateUpdateHandler(RoomStateUpdateHandler())
         self.adminController.setPaymentHandler(PaymentHandler())
-
+        
+        self.clientController.setDeviceHandler(DeviceHandler())
+        self.clientController.setClientHandler(ClientHandler())
         try:
             self.createTables()
         except Exception as e:
