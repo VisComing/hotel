@@ -18,7 +18,7 @@ class ClientController:
             path: 不可省略该参数
         """
         try:
-            roomID = ''
+            roomID = ""
             async for message in websocket:
                 logging.info(message)
                 method = json.loads(message)["method"]
@@ -33,8 +33,11 @@ class ClientController:
                     or method == "GetConfiguration"
                 ):
                     params = json.loads(message)["params"]
-                    roomID=params["roomID"]
-                    tasks=[self._ClientHandler.addRoom(roomID,websocket), self._DeviceHandler.run(message, websocket)]
+                    roomID = params["roomID"]
+                    tasks = [
+                        self._ClientHandler.addRoom(roomID, websocket),
+                        self._DeviceHandler.run(message, websocket),
+                    ]
                     await asyncio.wait(tasks)
 
                 #    await self._DeviceHandler.run(message, websocket)
@@ -42,13 +45,13 @@ class ClientController:
                 else:
                     logging.error("ClientController: rpc failed, no related function")
 
-            tasks=[self._ClientHandler.deleteRoomByID(roomID)]     #删除房间与连接对应关系
+            tasks = [self._ClientHandler.deleteRoomByID(roomID)]  # 删除房间与连接对应关系
             await asyncio.wait(tasks)
 
         except websockets.exceptions.ConnectionClosedError as e:
             logging.warning(e)
             print("xxxxxxxxxxxxxxxxxxxx")
-            tasks=[self._ClientHandler.deleteRoomByWeb(websocket)]     #删除房间与连接对应关系
+            tasks = [self._ClientHandler.deleteRoomByWeb(websocket)]  # 删除房间与连接对应关系
             await asyncio.wait(tasks)
 
     def setDeviceHandler(self, handler: DeviceHandler) -> None:
@@ -79,10 +82,14 @@ class ClientController:
         """
         serve 监听端口，处理连接
         """
-        #await websockets.serve(
+        # await websockets.serve(
         #    self.control, websocketsConfig.CLIENTHOST, websocketsConfig.CLIENTPORT
-        #)
+        # )
 
-        tasks=[self._ClientHandler.run(),websockets.serve(self.control, websocketsConfig.CLIENTHOST, websocketsConfig.CLIENTPORT)]
+        tasks = [
+            self._ClientHandler.run(),
+            websockets.serve(
+                self.control, websocketsConfig.CLIENTHOST, websocketsConfig.CLIENTPORT
+            ),
+        ]
         await asyncio.wait(tasks)
-
