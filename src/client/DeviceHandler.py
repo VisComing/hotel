@@ -96,12 +96,6 @@ class DeviceHandler:
                 Power.roomID == roomID and Power.startTime == sTime.startTime
             )
         )
-        await DBManager.create(
-            Power,
-            roomID=roomID,
-            startTime=currentTime,
-            powerState=False
-        )
 
         logging.info("Complete the {} PowerOff event...".format(roomID))
         return
