@@ -23,9 +23,20 @@ class ClientHandler:
     #删除字典，解除房间号与连接的关系
     #输入房间号
     #无输出
-    async def deleteRoom(self,roomID) -> None:
+    async def deleteRoomByID(self,roomID) -> None:
         global rooms
         rooms.pop(roomID)
+
+
+    #删除字典，解除房间号与连接的关系
+    #输入websocket
+    #无输出
+    async def deleteRoomByWeb(self,websocket) -> None:
+        #获取存在连接的房间
+        sendRoom=list(rooms.keys())
+        for roomID in sendRoom:
+            if rooms[roomID]==websocket:
+                rooms.pop(roomID)
 
 
     #开始执行
@@ -97,6 +108,7 @@ class ClientHandler:
                     Device.update(isSupplyAir=False).where(Device.roomID == cell[0])
                 )
             print(1)
+            print(rooms)
             await asyncio.sleep(timeUnit)
 
 

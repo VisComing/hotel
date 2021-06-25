@@ -42,11 +42,14 @@ class ClientController:
                 else:
                     logging.error("ClientController: rpc failed, no related function")
 
-            tasks=[self._ClientHandler.deleteRoom(roomID)]     #删除房间与连接对应关系
+            tasks=[self._ClientHandler.deleteRoomByID(roomID)]     #删除房间与连接对应关系
             await asyncio.wait(tasks)
 
         except websockets.exceptions.ConnectionClosedError as e:
             logging.warning(e)
+            print("xxxxxxxxxxxxxxxxxxxx")
+            tasks=[self._ClientHandler.deleteRoomByWeb(websocket)]     #删除房间与连接对应关系
+            await asyncio.wait(tasks)
 
     def setDeviceHandler(self, handler: DeviceHandler) -> None:
         """
