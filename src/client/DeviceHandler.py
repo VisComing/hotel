@@ -87,19 +87,25 @@ class DeviceHandler:
         await DBManager.execute(
             Device.update(isPower=False, isAskAir=False).where(Device.roomID == roomID)
         )
-
-        sTime = await DBManager.get(
-                TargetTem.select()
-                .where(TargetTem.roomID == roomID)
-                .order_by(TargetTem.startTime.desc())
-            )
-        await DBManager.execute(
-            TargetTem.update(endTime=currentTime).where(
-                TargetTem.roomID == roomID
-                and TargetTem.startTime == sTime.startTime
-            )
+        info_1 = await DBManager.execute(
+            TargetTem.select().where(TargetTem.roomID == roomID)
         )
-
+        info_2 = await DBManager.execute(
+            WindSpeed.select().where(WindSpeed.roomID == roomID)
+        )
+        if info_1:
+            sTime = await DBManager.get(
+                    TargetTem.select()
+                    .where(TargetTem.roomID == roomID)
+                    .order_by(TargetTem.startTime.desc())
+                )
+            await DBManager.execute(
+                TargetTem.update(endTime=currentTime).where(
+                    TargetTem.roomID == roomID
+                    and TargetTem.startTime == sTime.startTime
+                )
+            )
+        
         sTime = await DBManager.get(
             Power.select()
             .where(Power.roomID == roomID)
@@ -110,18 +116,18 @@ class DeviceHandler:
                 Power.roomID == roomID and Power.startTime == sTime.startTime
             )
         )
-
-        sTime = await DBManager.get(
-                WindSpeed.select()
-                .where(WindSpeed.roomID == roomID)
-                .order_by(WindSpeed.startTime.desc())
+        if info_2:
+            sTime = await DBManager.get(
+                    WindSpeed.select()
+                    .where(WindSpeed.roomID == roomID)
+                    .order_by(WindSpeed.startTime.desc())
+                )
+            await DBManager.execute(
+                WindSpeed.update(endTime=currentTime).where(
+                    WindSpeed.roomID == roomID
+                    and WindSpeed.startTime == sTime.startTime
+                )
             )
-        await DBManager.execute(
-            WindSpeed.update(endTime=currentTime).where(
-                WindSpeed.roomID == roomID
-                and WindSpeed.startTime == sTime.startTime
-            )
-        )
 
         logging.info("Complete the {} PowerOff event...".format(roomID))
         return
