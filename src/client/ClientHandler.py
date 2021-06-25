@@ -180,7 +180,7 @@ async def calculate(allRoom, rateing, timeUnit):
 async def createUsageRecord(roomID, theWindSpeed, billingRate, theCost, theSupplyTime):
 
     # 当前时间
-    currentTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    currentTime = datetime.now()
 
     # 查询是否此房间存在使用状态的订单
     result = await DBManager.execute(
@@ -266,7 +266,7 @@ async def askToSupply(roomID):
     """
     更新调度记录表
     """
-    currentTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    currentTime = datetime.now()
     await DBManager.create(Scheduling, roomID=roomID, timePoint=currentTime)
     """
     发送恢复送风信息
@@ -324,7 +324,7 @@ async def waitToSupply(roomID):
     """
     更新调度记录表
     """
-    currentTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    currentTime = datetime.now()
     await DBManager.create(Scheduling, roomID=roomID, timePoint=currentTime)
     """
     发送恢复送风信息
