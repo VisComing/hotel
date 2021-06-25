@@ -160,7 +160,7 @@ class OrderHandler:
         await DBManager.create(
             Bill,
             orderID=orderID,
-            BillID=billID,
+            billID=billID,
             totalCost=totalCost,
         )
 
