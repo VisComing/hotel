@@ -7,7 +7,7 @@ class Device(BaseModel):
     roomID = CharField(primary_key=True)
     isPower = BooleanField()
     targetTemperature = IntegerField()
-    currentTemperature = IntegerField()
+    currentTemperature = FloatField()
     # 1表示低风、2表示中风、3表示高风
     windSpeed = IntegerField()
     isAskAir = BooleanField()
