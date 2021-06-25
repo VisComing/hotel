@@ -7,75 +7,82 @@ import websockets
 import logging
 
 
+#ClientHandler类
 class ClientHandler:
     global rooms
     rooms={}
 
+    #构建字典，建立房间号与连接的关系
+    #输入房间号、连接
+    #无输出
     async def addRoom(self,roomID,web) -> None:
         global rooms
-
         rooms[roomID]=web
-        #print(roomID)
-        #print(rooms[roomID])
 
 
+    #删除字典，解除房间号与连接的关系
+    #输入房间号
+    #无输出
     async def deleteRoom(self,roomID) -> None:
         global rooms
-
         rooms.pop(roomID)
 
 
-
+    #开始执行
+    #无输入
+    #无输出
     async def run(self) -> None:
-        global timeUnit
-        global maxSupplyNum             #服务队列最多支持得数量
-        global supplyQueue       #roomID,风速,服务时间
-        global waitQueue       #roomID,风速,等待次数,等待时间
-        global askQueue
+        global supplyQueue       #服务队列：roomID,风速,服务时间
+        global waitQueue         #等待队列：roomID,风速,等待次数,等待时间
+        global askQueue          #请求队列：roomID,风速,等待次数,等待时间
         global askWindRoomList       #请求送风的房间ID列表
-        global waitTime        #一次等待的时间
-        global allRoom
-        global sendMessage
-
-        timeUnit=1
-        maxSupplyNum=4             
+        
         supplyQueue=[]       
         waitQueue=[]       
         askQueue=[]
-        askWindRoomList=[]       
-        waitTime=5          
-        allRoom=[]
-        sendMessage=[]
+        askWindRoomList=[] 
+        timeUnit=1
+        waitTime=5 
 
-        await self.schedule()
+        """
+        获取配置信息
+        """
+        result=await DBManager.execute(
+            Settings.select()
+        )
+        #相关配置信息
+        maxSupplyNum=result[0].maxNumOfClientsToServe                          
+        electricityPrice=result[0].electricityPrice
+        rateing={"low":result[0].lowRate * electricityPrice,
+                 "mid":result[0].midRate * electricityPrice,
+                 "high":result[0].highRate * electricityPrice}
+
+        #开始循环
+        await self.schedule(maxSupplyNum,waitTime,rateing,timeUnit)
 
 
-
-    #insert into  tbdevice  values('01-01-02',1,25,24,1,1,0,0);
-    #建表
-    #Device.create_table(True)
-    #Scheduling.create_table(True)
-    #Order.create_table(True)
-    #UsageRecord.create_table(True)
-
-
-    async def schedule(self) -> None:
+    #定时发送计费信息和调度
+    #输入 maxSupplyNum（最大调度数）,waitTime(等待队列一次等待时间),rateing(计费速率参数),timeUnit（多久循环一次）
+    #无输出
+    async def schedule(self,maxSupplyNum,waitTime,rateing,timeUnit) -> None:
         while True:
-            await queryDevices()
-            await calculate()
-            await setFee()
+
+            # 调度前发送计费信息等
+            await sendBillingMessage(rateing,timeUnit)
 
             #预处理
             await preTreat()          
 
             #将请求队列排序
             await askSort()
+
+            #构建请求队列
             tmp=[]
             for cell in askQueue:
                 tmp.append(cell)
 
             for cell in tmp:
-                await scheduleHandler(cell)          #调度算法
+                await scheduleHandler(cell,maxSupplyNum,waitTime)          #调度算法
 
             """
             更新device表，将所有supplyQueue中的roomID的isSupplyAir置为true
@@ -89,13 +96,142 @@ class ClientHandler:
                 await DBManager.execute(
                     Device.update(isSupplyAir=False).where(Device.roomID == cell[0])
                 )
-            await sendFee()
-            # print(1)
-            #print(rooms)
+            print(1)
             await asyncio.sleep(timeUnit)
 
 
-async def askToSupply(roomID):           #申请队列到服务队列
+# 调度前发送计费信息等
+# 输入 rateing(计费速率参数),timeUnit（多久循环一次）
+# 输出 无
+async def sendBillingMessage(rateing,timeUnit):
+        
+    #查询所有存在使用订单的房间号
+    allRoom = await queryDevices()
+    if allRoom!=None:
+        #计算 billingRate,cost,supplyTime，并更新device表，UsageRecord表，发送计费信息
+        await calculate(allRoom,rateing,timeUnit)
+
+
+#查询所有存在使用订单的房间号
+#输入 无
+#返回 房间状态字典列表或None
+async def queryDevices():
+
+    allRoom=[]
+    #查询存在using订单的房间号
+    result=await DBManager.execute(
+        Order.select().where(Order.state=='using')
+    )
+    #若存在using订单的房间，查询device表中该房间的相关信息
+    if len(result)!=0:
+        for cell in result:
+            roomState=await DBManager.execute(
+                Device.select().where(Device.roomID==cell.roomID)
+            )
+            allRoom.append(roomState[0])
+        return allRoom
+    #若不存在using订单的房间，返回空
+    else:
+        return None
+
+
+#计算 billingRate,cost,supplyTime，并更新device表，UsageRecord表，发送计费信息
+#输入 所有存在使用订单的房间字典,rateing(计费速率参数),timeUnit（多久循环一次）
+#返回待发送的计费信息
+async def calculate(allRoom,rateing,timeUnit):
+
+    for cell in allRoom:
+        if cell.isSupplyAir==False:
+            billingRate=0
+        elif cell.windSpeed==1:
+            billingRate=rateing["low"]
+        elif cell.windSpeed==2:
+            billingRate=rateing["mid"]
+        else:
+            billingRate=rateing["high"]
+        theCost=cell.cost+billingRate*timeUnit
+        if cell.isSupplyAir==True:
+            theSupplyTime=cell.supplyTime+timeUnit
+        else:
+            theSupplyTime=cell.supplyTime
+        
+        #更新device表
+        await DBManager.execute(
+                Device.update(cost=theCost,supplyTime=theSupplyTime).where(Device.roomID == cell.roomID)
+        )
+        #更新或生成UsageRecord表（使用记录）
+        await createUsageRecord(cell.roomID,cell.windSpeed,billingRate,theCost,theSupplyTime)
+        #发送计费信息
+        await sendFee(cell.roomID,billingRate,theCost,theSupplyTime)
+
+
+
+#更新或生成UsageRecord表
+#输入 roomID,windSpeed,billingRate,theCost,theSupplyTime
+#返回 无
+async def createUsageRecord(roomID,theWindSpeed,billingRate,theCost,theSupplyTime):
+
+    #当前时间
+    currentTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    #查询是否此房间存在使用状态的订单
+    result=await DBManager.execute(
+        Order.select().where(Order.roomID == roomID , Order.state=='using')
+    )
+    theOrder=result[0].orderID
+
+    #查询此条使用记录是否已被创建
+    result=await DBManager.execute(
+        UsageRecord.select().where(UsageRecord.orderID == theOrder , UsageRecord.startTime==UsageRecord.endTime)
+    )
+    
+    #无使用记录，创建使用记录
+    if len(result)==0:
+        await DBManager.create(
+        UsageRecord, orderID=theOrder, startTime=currentTime , endTime=currentTime,
+                        windSpeed=theWindSpeed, cost=theCost , billingRate=theSupplyTime
+    )
+    #存在使用记录，更新endTime
+    else:
+        #判断是否存在费率更新
+        check=math.isclose(result[0].billingRate, billingRate, rel_tol=1e-04)
+        #存在更新
+        if check==False:
+            #更新endTime
+            await DBManager.execute(
+                UsageRecord.update(endTime=currentTime).where(UsageRecord.orderID == theOrder)
+            )
+            #创建新的使用记录
+            await DBManager.create(
+                UsageRecord, orderID=theOrder, startTime=currentTime , endTime=currentTime,
+                                windSpeed=theWindSpeed, cost=theCost , billingRate=theSupplyTime
+            )
+
+
+#发送计费信息
+#输入 roomID,billingRate,theCost,theSupplyTime
+#输出 无
+async def sendFee(roomID,billingRate,theCost,theSupplyTime):
+
+    #获取存在连接的房间
+    sendRoom=list(rooms.keys())
+    
+    #房间存在连接
+    if roomID in sendRoom:    
+        try:
+            await WebSocketsClient(rooms[roomID]).notify(
+                method_name="BillingInformationUpdate", billingRate=billingRate,
+                                                                totalCost=theCost,
+                                                                totalServiceTime=theSupplyTime
+            )
+        except websockets.exceptions.ConnectionClosedError as e:
+            # 客户端断开连接异常
+            logging.warning(e)
+
+
+
+#申请队列到服务队列
+async def askToSupply(roomID):           
     for cell in askQueue:
         if(cell[0]==roomID):
             supplyCell=[cell[0],cell[1],0]
@@ -126,8 +262,8 @@ async def askToSupply(roomID):           #申请队列到服务队列
             logging.warning(e)
 
 
-
-async def askToWait(roomID):           #申请队列到等待队列
+#申请队列到等待队列
+async def askToWait(roomID,waitTime):           
     for cell in askQueue:
         if(cell[0]==roomID):
             if cell[3]==0:
@@ -153,7 +289,8 @@ async def askToWait(roomID):           #申请队列到等待队列
             logging.warning(e)
 
 
-async def waitToSupply(roomID):           #等待队列到服务队列
+#等待队列到服务队列
+async def waitToSupply(roomID):           
     for cell in waitQueue:
         if(cell[0]==roomID):
             supplyCell=[cell[0],cell[1],0]
@@ -184,7 +321,8 @@ async def waitToSupply(roomID):           #等待队列到服务队列
             logging.warning(e)
 
 
-async def supplyToWait(roomID):           #服务队列到等待队列
+#服务队列到等待队列
+async def supplyToWait(roomID,waitTime):           
     for cell in supplyQueue:
         if(cell[0]==roomID):
             waitCell=[cell[0],cell[1],1,waitTime]
@@ -204,8 +342,10 @@ async def supplyToWait(roomID):           #服务队列到等待队列
             # 客户端断开连接异常
             logging.warning(e)
 
-
-async def delectRoom(roomID):             #删除某停止请求送风的房间
+#删除某停止请求送风的房间
+#输入 房间ID
+#输出 无
+async def delectRoom(roomID):             
     for cell in waitQueue:
         if(cell[0]==roomID):
             waitQueue.remove(cell)
@@ -214,6 +354,7 @@ async def delectRoom(roomID):             #删除某停止请求送风的房间
             supplyQueue.remove(cell)
 
 
+#交换两房间ID位置
 async def swap(x,y):
     tmp=['x',0,0,0]
     for i in range(0,4):
@@ -222,7 +363,8 @@ async def swap(x,y):
         y[i]=tmp[i]
 
 
-async def askSort():           #按照风速和等待次数排序
+#按照风速和等待次数排序
+async def askSort():           
     n=len(askQueue)
     for i in range(0,n-1):
         for j in range(0,n-1-i):
@@ -234,99 +376,8 @@ async def askSort():           #按照风速和等待次数排序
                 await swap(askQueue[j],askQueue[j+1])
 
 
-
-async def queryDevices():
-    global allRoom
-
-    allRoom=[]
-    result=await DBManager.execute(
-        Device.select()
-    )
-    for cell in result:
-        allRoom.append([cell.roomID,cell.windSpeed,cell.isAskAir,cell.isSupplyAir,
-                        cell.cost,cell.supplyTime])
-    #print(allRoom)
-
-
-async def calculate():
-    global allRoom
-    global sendMessage
-
-    sendMessage=[]
-    for cell in allRoom:
-        if cell[3]==False:
-            billingRate=0
-        elif cell[1]==1:
-            billingRate=1/180
-        elif cell[1]==2:
-            billingRate=1/120
-        else:
-            billingRate=1/60
-        cost=cell[4]+billingRate*timeUnit
-        if cell[3]==True:
-            supplyTime=cell[5]+timeUnit
-        else:
-            supplyTime=cell[5]
-        sendMessage.append([cell[0],cell[1],billingRate,cost,supplyTime])
-    #print(sendMessage)
-
-
-async def setFee():
-    global sendMessage
-
-    for cell in sendMessage:
-        await DBManager.execute(
-                Device.update(cost=cell[3],supplyTime=cell[4]).where(Device.roomID == cell[0])
-        )
-    for cell in sendMessage:
-        currentTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        result=await DBManager.execute(
-            Order.select().where(Order.roomID == cell[0] , Order.state=='using')
-        )
-        theOrder=result[0].orderID
-        #print(theOrder)
-        result=await DBManager.execute(
-            UsageRecord.select().where(UsageRecord.orderID == theOrder , UsageRecord.startTime==UsageRecord.endTime)
-        )
-        if len(result)==0:
-            await DBManager.create(
-            UsageRecord, orderID=theOrder, startTime=currentTime , endTime=currentTime,
-                            windSpeed=cell[1], cost=cell[3] , billingRate=cell[2]
-        )
-        else:
-            check=math.isclose(result[0].billingRate, cell[2], rel_tol=1e-04)
-            if check==False:
-                await DBManager.execute(
-                    UsageRecord.update(endTime=currentTime).where(UsageRecord.orderID == theOrder)
-                )
-                await DBManager.create(
-                    UsageRecord, orderID=theOrder, startTime=currentTime , endTime=currentTime,
-                                    windSpeed=cell[1], cost=cell[3] , billingRate=cell[2]
-                )
-
-
-
-async def sendFee():
-    global sendMessage
-
-    sendRoom=list(rooms.keys())
-    for cell in sendMessage:
-        if cell[0] in sendRoom:    
-            try:
-                await WebSocketsClient(rooms[cell[0]]).notify(
-                    method_name="BillingInformationUpdate", billingRate=cell[2],
-                                                                    totalCost=cell[3],
-                                                                    totalServiceTime=cell[4]
-                )
-            except websockets.exceptions.ConnectionClosedError as e:
-                # 客户端断开连接异常
-                logging.warning(e)
-
-
-
-
-async def preTreat():          #调度算法前预处理
+#调度算法前预处理
+async def preTreat():          
 
     #服务时间+1
     for i in range(0,len(supplyQueue)):
@@ -398,6 +449,9 @@ async def preTreat():          #调度算法前预处理
     #print(askQueue)
 
 
+#更新服务队列和等待队列的风速
+#输入 房间信息
+#无输出
 async def updateSpeed(askRoom):
     for cell in supplyQueue:
         if cell[0]==askRoom[0]:
@@ -407,6 +461,9 @@ async def updateSpeed(askRoom):
             cell[1]=askRoom[1]
 
 
+#判断是否符合优先级策略
+#输入 房间信息
+#输出 服务队列的最小风速，若没有，则返回0
 async def windJudge(room):
     min=4
     for cell in supplyQueue:
@@ -419,8 +476,10 @@ async def windJudge(room):
     else:
         return min         #返回最小风速
 
-
-async def findMaxSRoom(speed):            #找到特定风速下最大服务时间的房间ID
+#找到特定风速下最大服务时间的房间ID
+#输入 房间信息
+#输出 房间ID
+async def findMaxSRoom(speed):            
     
     maxRoomID=''
     maxSupplyTime=-1
@@ -432,14 +491,17 @@ async def findMaxSRoom(speed):            #找到特定风速下最大服务时�
     return maxRoomID
 
 
-async def scheduleHandler(room):          #调度算法
+#调度算法
+#输入 room,maxSupplyNum,waitTime
+#输出 无
+async def scheduleHandler(room,maxSupplyNum,waitTime):          
     
     #调度队列未满
-    if len(supplyQueue)<maxSupplyNum:
+    if len(supplyQueue)< maxSupplyNum:
         await askToSupply(room[0])
     #调度队列已满
     elif room[3]!=0:
-        await askToWait(room[0])
+        await askToWait(room[0],waitTime)
     else:
         check=await windJudge(room)
 
@@ -447,24 +509,24 @@ async def scheduleHandler(room):          #调度算法
         if check>0:
             maxRoomID=await findMaxSRoom(check)
             if maxRoomID!='':
-                await supplyToWait(maxRoomID)
+                await supplyToWait(maxRoomID,waitTime)
                 await askToSupply(room[0])
 
         #如果判断为相等
         elif check==0:
             #若waitNum=0
             if room[2]==0:
-                await askToWait(room[0])
+                await askToWait(room[0],waitTime)
             #若waitNum>0
             else:
                 maxRoomID=await findMaxSRoom(room[1])
                 if maxRoomID!='':
-                    await supplyToWait(maxRoomID)
+                    await supplyToWait(maxRoomID,waitTime)
                     await askToSupply(room[0])
 
         #如果判断为小于
         else:
-            await askToWait(room[0])
+            await askToWait(room[0],waitTime)
 
 
 
