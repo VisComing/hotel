@@ -54,7 +54,8 @@ class MainController:
         """
         run 运行adminController以及clientController
         """
-        await self.adminController.serve()
+        tasks = [self.adminController.serve(), self.clientController.serve()]
+        await asyncio.wait(tasks)
 
     def createTables(self) -> None:
         """
