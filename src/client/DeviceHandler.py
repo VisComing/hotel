@@ -7,7 +7,7 @@
 import logging
 from datetime import datetime
 from operator import methodcaller
-
+from peewee import fn
 from peewee_async import select
 from src.model.BaseModel import DBManager
 from jsonrpcserver import method, async_dispatch as dispatch
@@ -16,6 +16,7 @@ from src.model.Power import Power
 from src.model.ReachTem import ReachTem
 from src.model.TargetTem import TargetTem
 from src.model.WindSpeed import WindSpeed
+from src.model.Settings import Settings
 
 windDict = {"low": 1, "medium": 2, "high": 3}
 
@@ -79,13 +80,32 @@ class DeviceHandler:
 
         Returns:
             修改device表中的isPoweron、isAskAir
-                找Power表中的最后一条，修改endTime、powerState
+            找Power表中的最后一条，修改endTime、powerState
+            修改所有含endTime的表项
         """
         currentTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         await DBManager.execute(
             Device.update(isPower=False, isAskAir=False).where(Device.roomID == roomID)
         )
-
+        info_1 = await DBManager.execute(
+            TargetTem.select().where(TargetTem.roomID == roomID)
+        )
+        info_2 = await DBManager.execute(
+            WindSpeed.select().where(WindSpeed.roomID == roomID)
+        )
+        if info_1:
+            sTime = await DBManager.get(
+                    TargetTem.select()
+                    .where(TargetTem.roomID == roomID)
+                    .order_by(TargetTem.startTime.desc())
+                )
+            await DBManager.execute(
+                TargetTem.update(endTime=currentTime).where(
+                    TargetTem.roomID == roomID
+                    and TargetTem.startTime == sTime.startTime
+                )
+            )
+        
         sTime = await DBManager.get(
             Power.select()
             .where(Power.roomID == roomID)
@@ -96,6 +116,18 @@ class DeviceHandler:
                 Power.roomID == roomID and Power.startTime == sTime.startTime
             )
         )
+        if info_2:
+            sTime = await DBManager.get(
+                    WindSpeed.select()
+                    .where(WindSpeed.roomID == roomID)
+                    .order_by(WindSpeed.startTime.desc())
+                )
+            await DBManager.execute(
+                WindSpeed.update(endTime=currentTime).where(
+                    WindSpeed.roomID == roomID
+                    and WindSpeed.startTime == sTime.startTime
+                )
+            )
 
         logging.info("Complete the {} PowerOff event...".format(roomID))
         return
@@ -252,22 +284,18 @@ class DeviceHandler:
     @method
     async def GetConfiguration(roomID: str):
         """
-        GetConfiguration 更新房间当前温度事件
-
-        Args:
-            roomID(str): 房间ID，格式 01-23-45
-
+        GetConfiguration 获取系统对空调的默认配置
         Returns:
             系统默认配置信息
         """
         # 查settings表
-
+        settings_info  = await DBManager.get(Settings.select())
         # 返回给客户端
         return {
-            "temperatureControlMode": "heating",
+            "temperatureControlMode": settings_info.temperatureControlMode,
             "targetTemperatureRange": {
-                "heating": {"min": 18, "max": 26},
-                "cooling": {"min": 26, "max": 30},
+                "heating": {"min": settings_info.minHeatTemperature, "max": settings_info.maxHeatTemperature},
+                "cooling": {"min": settings_info.minCoolTemperature, "max": settings_info.maxCoolTemperature},
             },
-            "defaultTemperature": 26,
+            "defaultTemperature": settings_info.defaultTemperature,
         }
