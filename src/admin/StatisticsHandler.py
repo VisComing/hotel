@@ -34,17 +34,14 @@ class StatisticsHandler:
         startTime = datetime.fromtimestamp(startTime)
         endTime = datetime.fromtimestamp(endTime)
 
-        # 选出所有在要求时段内有记录的房间
+        # 选出所有在要求时段内有记录的房间：注意考虑部分时间在该时间段的情况
+        # 只需保证空调运行的结束时间至少在要求时段开始之后且开始时间在要求时段结束之前
         rooms = await DBManager.execute(
             Power.select().where(Power.endTime > startTime & Power.startTime < endTime)
         )
 
         statistics = list()
         for room in rooms:
-            # 以roomID分类求解，orders表示一个roomID对应的所有订单
-            orders = await DBManager.execute(
-                Order.select().where(Order.roomID == room.roomID)
-            )
             # 计算空调使用次数
             useTimes = await DBManager.execute(
                 Power.select().where(
@@ -122,7 +119,8 @@ class StatisticsHandler:
                 )
             )
             scheduleTimes = len(scheduleTimes)
-
+            
+            # 以roomID分类求解，orders表示一个roomID对应的所有订单
             # 计算详单记录数和总费用
             orders = await DBManager.execute(
                 Order.select().where(Order.roomID == room.roomID)
