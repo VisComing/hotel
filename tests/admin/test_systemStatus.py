@@ -28,7 +28,7 @@ async def test_systemStatus():
     # 关闭系统
     await SystemStatusHandler.stopSystem()
     assert SystemStatusHandler.status == False
-    #测试 系统尚未启动
-    with pytest.raises(ApiError, match="系统尚未启动") as excinfo:  
+    # 测试 系统尚未启动
+    with pytest.raises(ApiError, match="系统尚未启动") as excinfo:
         await SystemStatusHandler.stopSystem()
     assert excinfo.type == ApiError

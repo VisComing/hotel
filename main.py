@@ -45,7 +45,7 @@ class MainController:
         settings = DBManager.execute(Settings.select())
         if len(settings) == 0:
             self.initSettings()
-            
+
     async def run(self) -> None:
         """
         run 运行adminController以及clientController
@@ -107,6 +107,7 @@ class MainController:
             highRate=3,
             maxNumOfClientsToServe=3,
         )
+
 
 # 程序入口，启动事件循环
 if __name__ == "__main__":

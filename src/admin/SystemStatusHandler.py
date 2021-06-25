@@ -4,6 +4,7 @@ from src.model import *
 from jsonrpcserver.exceptions import ApiError
 from src.settings import adminErrorCode
 
+
 class SystemStatusHandler:
     async def run(self, message: str, websocket) -> None:
         response = await dispatch(message)
@@ -33,8 +34,10 @@ class SystemStatusHandler:
         """
         logging.info("start system...")
         if SystemStatusHandler.status == True:
-            raise ApiError("系统已经在运行中", code=adminErrorCode.START_SYSTEM_SYSTEM_IS_RUNNING)
-        
+            raise ApiError(
+                "系统已经在运行中", code=adminErrorCode.START_SYSTEM_SYSTEM_IS_RUNNING
+            )
+
         SystemStatusHandler.status = True
 
         return None
@@ -49,8 +52,7 @@ class SystemStatusHandler:
         logging.info("stop system...")
         if SystemStatusHandler.status == False:
             raise ApiError("系统尚未启动", code=adminErrorCode.START_SYSTEM_SYSTEM_IS_RUNNING)
-        
-        SystemStatusHandler.status = False
 
+        SystemStatusHandler.status = False
 
         return None

@@ -119,7 +119,7 @@ class StatisticsHandler:
                 )
             )
             scheduleTimes = len(scheduleTimes)
-            
+
             # 以roomID分类求解，orders表示一个roomID对应的所有订单
             # 计算详单记录数和总费用
             orders = await DBManager.execute(
