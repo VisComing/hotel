@@ -37,9 +37,11 @@ class StatisticsHandler:
         # 选出所有在要求时段内有记录的房间：注意考虑部分时间在该时间段的情况
         # 只需保证空调运行的结束时间至少在要求时段开始之后且开始时间在要求时段结束之前
         rooms = await DBManager.execute(
-            Power.select().where(Power.endTime > startTime & Power.startTime < endTime)
+            Power.select(fn.Distinct(Power.roomID)).where(
+                (Power.endTime > startTime) & (Power.startTime < endTime)
+            )
         )
-
+        rooms = list(rooms)
         statistics = list()
         for room in rooms:
             # 计算空调使用次数
