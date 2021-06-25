@@ -44,7 +44,9 @@ class DetailedListHandler:
             )
 
         detailedlist = await DBManager.execute(
-            DetailListItem.select().where(DetailListItem.orderID == orderID)
+            DetailListItem.select()
+            .where(DetailListItem.orderID == orderID)
+            .order_by(DetailListItem.startTime)
         )
         dlist = list()
         for items in detailedlist:
