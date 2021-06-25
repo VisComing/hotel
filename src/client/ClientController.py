@@ -50,7 +50,6 @@ class ClientController:
 
         except websockets.exceptions.ConnectionClosedError as e:
             logging.warning(e)
-            print("xxxxxxxxxxxxxxxxxxxx")
             tasks = [self._ClientHandler.deleteRoomByWeb(websocket)]  # 删除房间与连接对应关系
             await asyncio.wait(tasks)
 

@@ -103,8 +103,7 @@ class ClientHandler:
                 await DBManager.execute(
                     Device.update(isSupplyAir=False).where(Device.roomID == cell[0])
                 )
-            print(1)
-            print(rooms)
+
             await asyncio.sleep(timeUnit)
 
 
@@ -256,6 +255,9 @@ async def sendFee(roomID, billingRate, theCost, theSupplyTime):
 
 # 申请队列到服务队列
 async def askToSupply(roomID):
+
+    speedList=["","low","medium","high"]
+
     for cell in askQueue:
         if cell[0] == roomID:
             supplyCell = [cell[0], cell[1], 0]
@@ -275,7 +277,7 @@ async def askToSupply(roomID):
     if roomID in sendRoom:
         try:
             await WebSocketsClient(rooms[roomID]).notify(
-                method_name="WindSupplyResumed", windSpeed=speed
+                method_name="WindSupplyResumed", windSpeed=speedList[speed]
             )
         except websockets.exceptions.ConnectionClosedError as e:
             # 客户端断开连接异常
@@ -311,6 +313,9 @@ async def askToWait(roomID, waitTime):
 
 # 等待队列到服务队列
 async def waitToSupply(roomID):
+
+    speedList=["","low","medium","high"]
+
     for cell in waitQueue:
         if cell[0] == roomID:
             supplyCell = [cell[0], cell[1], 0]
@@ -330,7 +335,7 @@ async def waitToSupply(roomID):
     if roomID in sendRoom:
         try:
             await WebSocketsClient(rooms[roomID]).notify(
-                method_name="WindSupplyResumed", windSpeed=speed
+                method_name="WindSupplyResumed", windSpeed=speedList[speed]
             )
         except websockets.exceptions.ConnectionClosedError as e:
             # 客户端断开连接异常
