@@ -6,6 +6,7 @@ from src.admin.OrderHandler import OrderHandler
 from src.model import *
 from jsonrpcserver.exceptions import ApiError
 
+
 @pytest.mark.asyncio
 async def test_finishOrder():
     """
@@ -34,6 +35,15 @@ async def test_finishOrder():
         state="unpaid",
     )
     await DBManager.create(
+        Order,
+        userID="Cindy",
+        roomID="01-01-03",
+        orderID="3",
+        createdTime=time,
+        finishedTime=time,
+        state="using",
+    )
+    await DBManager.create(
         UsageRecord,
         orderID="1",
         startTime=time,
@@ -56,8 +66,11 @@ async def test_finishOrder():
         highRate=3,
         maxNumOfClientsToServe=3,
     )
-    
+
     await OrderHandler.finishOrder(orderID="1")
+    bill1 = await DBManager.execute(Bill.select().where(Bill.orderID == "1"))
+    bill1 = list(bill1)
+    await OrderHandler.finishOrder(orderID="3")
     res = await DBManager.execute(Order.select().where(Order.orderID == "1"))
     orders = list(res)
     order = orders[0]
@@ -69,7 +82,7 @@ async def test_finishOrder():
     assert order.finishedTime != time
     # 测试使用记录被存入详单
     res = await DBManager.execute(
-            DetailListItem.select().where(DetailListItem.orderID == "1")
+        DetailListItem.select().where(DetailListItem.orderID == "1")
     )
     assert len(res) == 1
     # 测试账单中添加了一条数据
@@ -79,7 +92,7 @@ async def test_finishOrder():
     # 测试ApiError
     # 测试无效的订单ID
     with pytest.raises(ApiError, match="无效的订单ID") as excinfo:
-        await OrderHandler.finishOrder("3")
+        await OrderHandler.finishOrder("4")
     assert excinfo.type == ApiError
     # 测试非法的订单状态
     with pytest.raises(ApiError, match="非法的订单状态") as excinfo:

@@ -7,6 +7,7 @@ from src.admin.PaymentHandler import PaymentHandler
 from src.model import *
 from jsonrpcserver.exceptions import ApiError
 
+
 @pytest.mark.asyncio
 async def test_makePayment():
     """
@@ -41,11 +42,11 @@ async def test_makePayment():
     assert state == "completed"
 
     # 测试无效的订单ID
-    with pytest.raises(ApiError, match = "无效的订单ID") as excinfo:
+    with pytest.raises(ApiError, match="无效的订单ID") as excinfo:
         await PaymentHandler.makePayment("3")
     assert excinfo.type == ApiError
 
     # 测试非法的订单状态：unpaid是合法状态
-    with pytest.raises(ApiError, match = "非法的订单状态") as excinfo:
+    with pytest.raises(ApiError, match="非法的订单状态") as excinfo:
         await PaymentHandler.makePayment("2")
     assert excinfo.type == ApiError

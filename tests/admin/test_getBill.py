@@ -8,6 +8,7 @@ from src.model import *
 from jsonrpcserver.exceptions import ApiError
 from src.settings import adminErrorCode
 
+
 @pytest.mark.asyncio
 async def test_getBill():
     """
@@ -58,11 +59,11 @@ async def test_getBill():
     assert test == ans
 
     # 测试无效的订单ID
-    with pytest.raises(ApiError, match = "无效的订单ID") as excinfo:
+    with pytest.raises(ApiError, match="无效的订单ID") as excinfo:
         await BillHandler.getBill("3")
     assert excinfo.type == ApiError
 
     # 测试非法的订单状态
-    with pytest.raises(ApiError, match = "非法的订单状态") as excinfo:
+    with pytest.raises(ApiError, match="非法的订单状态") as excinfo:
         await BillHandler.getBill("2")
     assert excinfo.type == ApiError
