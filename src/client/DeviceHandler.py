@@ -92,9 +92,15 @@ class DeviceHandler:
             .order_by(Power.startTime.desc())
         )
         await DBManager.execute(
-            Power.update(endTime=currentTime, powerState=False).where(
+            Power.update(endTime=currentTime).where(
                 Power.roomID == roomID and Power.startTime == sTime.startTime
             )
+        )
+        await DBManager.create(
+            Power,
+            roomID=roomID,
+            startTime=currentTime,
+            powerState=False
         )
 
         logging.info("Complete the {} PowerOff event...".format(roomID))
@@ -161,7 +167,23 @@ class DeviceHandler:
         await DBManager.execute(
             Device.update(windSpeed=windDict[windSpeed]).where(Device.roomID == roomID)
         )
-
+        # 如果对于此房间来说 该用户不是第一次调整：即有记录，需要补充上一次的endTime
+        info = await DBManager.execute(
+            WindSpeed.select().where(WindSpeed.roomID == roomID)
+        )
+        if info:
+            sTime = await DBManager.get(
+                WindSpeed.select()
+                .where(WindSpeed.roomID == roomID)
+                .order_by(WindSpeed.startTime.desc())
+            )
+            logging.info("The startTime is {}".format(sTime.startTime))
+            await DBManager.execute(
+                WindSpeed.update(endTime=currentTime).where(
+                    WindSpeed.roomID == roomID
+                    and WindSpeed.startTime == sTime.startTime
+                )
+            )
         await DBManager.create(
             WindSpeed,
             roomID=roomID,
