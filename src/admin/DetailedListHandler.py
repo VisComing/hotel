@@ -1,5 +1,10 @@
+import logging
+import time
 from jsonrpcserver import method, async_dispatch as dispatch
 from jsonrpcserver.methods import Method
+from src.model import *
+from src.settings import adminErrorCode
+from jsonrpcserver.exceptions import ApiError
 
 
 class DetailedListHandler:
@@ -21,7 +26,40 @@ class DetailedListHandler:
             orderID (str): 订单ID
 
         Returns:
-            dict
+            dict: {"startTime", "endTime", "windSpeed", "billingRate"}
 
         """
-        return {}
+        logging.info("get detailed list...")
+
+        orders = await DBManager.execute(Order.select().where(Order.orderID == orderID))
+        orders = list(orders)
+        order = orders[0]
+        if len(orders) == 0:
+            raise ApiError(
+                "无效的订单ID", code=adminErrorCode.GET_DETAILED_LIST_INVALID_ORDER_ID
+            )
+        if order.state == "using":
+            raise ApiError(
+                "非法的订单状态", code=adminErrorCode.GET_DETAILED_LIST_INVALID_ORDER_STATE
+            )
+
+        detailedlist = await DBManager.execute(
+            DetailListItem.select().where(DetailListItem.orderID == orderID)
+        )
+        dlist = list()
+        for items in detailedlist:
+            if items.windSpeed == 1:
+                windSpeed = "low"
+            elif items.windSpeed == 2:
+                windSpeed = "medium"
+            elif items.windSpeed == 3:
+                windSpeed = "high"
+            item = {
+                "startTime": int(time.mktime(items.startTime.timetuple())),
+                "endTime": int(time.mktime(items.endtime.timetuple())),
+                "windSpeed": windSpeed,
+                "billingRate": items.billingRate,
+            }
+            dlist.append(item)
+
+        return {"items": dlist}
