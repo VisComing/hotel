@@ -135,6 +135,6 @@ class SysConfigHandler:
                 midRate=newConfigration["electricityConsumptionRate"]["medium"],
                 highRate=newConfigration["electricityConsumptionRate"]["high"],
                 maxNumOfClientsToServe=newConfigration["maxNumOfClientsToServe"],
-            )
+            ).where(True)
         )
         return None

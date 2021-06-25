@@ -105,10 +105,10 @@ class MainController:
             return
         Settings.create(
             temperatureControlMode="heating",
-            minHeatTemperature=18,
-            maxHeatTemperature=26,
-            minCoolTemperature=26,
-            maxCoolTemperature=30,
+            minHeatTemperature=26,
+            maxHeatTemperature=30,
+            minCoolTemperature=18,
+            maxCoolTemperature=26,
             defaultTemperature=26,
             electricityPrice=1,
             lowRate=1,
