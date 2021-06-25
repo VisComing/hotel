@@ -114,27 +114,27 @@ class SysConfigHandler:
                 code=adminErrorCode.SET_SYS_CONFIG_PROHIBIT_CONFIGURATION_AT_RUNTIME,
             )
 
-        await DBManager.create(
-            Settings,
-            temperatureControlMode=newConfigration["temperatureControlMode"],
-            minHeatTemperature=newConfigration["targetTemperatureRange"]["heating"][
-                "min"
-            ],
-            maxHeatTemperature=newConfigration["targetTemperatureRange"]["heating"][
-                "max"
-            ],
-            minCoolTemperature=newConfigration["targetTemperatureRange"]["cooling"][
-                "min"
-            ],
-            maxCoolTemperature=newConfigration["targetTemperatureRange"]["cooling"][
-                "max"
-            ],
-            defaultTemperature=newConfigration["defaultTemperature"],
-            electricityPrice=newConfigration["electricityPrice"],
-            lowRate=newConfigration["electricityConsumptionRate"]["low"],
-            midRate=newConfigration["electricityConsumptionRate"]["medium"],
-            highRate=newConfigration["electricityConsumptionRate"]["high"],
-            maxNumOfClientsToServe=newConfigration["maxNumOfClientsToServe"],
+        await DBManager.execute(
+            Settings.update(
+                temperatureControlMode=newConfigration["temperatureControlMode"],
+                minHeatTemperature=newConfigration["targetTemperatureRange"]["heating"][
+                    "min"
+                ],
+                maxHeatTemperature=newConfigration["targetTemperatureRange"]["heating"][
+                    "max"
+                ],
+                minCoolTemperature=newConfigration["targetTemperatureRange"]["cooling"][
+                    "min"
+                ],
+                maxCoolTemperature=newConfigration["targetTemperatureRange"]["cooling"][
+                    "max"
+                ],
+                defaultTemperature=newConfigration["defaultTemperature"],
+                electricityPrice=newConfigration["electricityPrice"],
+                lowRate=newConfigration["electricityConsumptionRate"]["low"],
+                midRate=newConfigration["electricityConsumptionRate"]["medium"],
+                highRate=newConfigration["electricityConsumptionRate"]["high"],
+                maxNumOfClientsToServe=newConfigration["maxNumOfClientsToServe"],
+            )
         )
         return None
-        
