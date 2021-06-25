@@ -63,8 +63,8 @@ class DeviceHandler:
                 Device.update(isPower=True).where(Device.roomID == roomID)
             )
 
-        await DBManager.create(
-            Power, roomID=roomID, startTime=currentTime, powerState=True
+        await DBManager.execute(
+            Power.insert(roomID=roomID, startTime=currentTime, powerState=True).on_conflict_replace()
         )
 
         logging.info("Complete the {} poweron event...".format(roomID))
@@ -169,8 +169,8 @@ class DeviceHandler:
                     and TargetTem.startTime == sTime.startTime
                 )
             )
-        await DBManager.create(
-            TargetTem, roomID=roomID, startTime=currentTime, targetTem=targetTemperature
+        await DBManager.execute(
+            TargetTem.insert(roomID=roomID, startTime=currentTime, targetTem=targetTemperature).on_conflict_replace() 
         )
 
         logging.info("Complete the {} AdjustTargetTemperature info...".format(roomID))
@@ -210,11 +210,8 @@ class DeviceHandler:
                     and WindSpeed.startTime == sTime.startTime
                 )
             )
-        await DBManager.create(
-            WindSpeed,
-            roomID=roomID,
-            startTime=currentTime,
-            windSpeed=windDict[windSpeed],
+        await DBManager.execute(
+            WindSpeed.insert(roomID=roomID, startTime=currentTime, windSpeed=windDict[windSpeed]).on_conflict_replace(),
         )
 
         logging.info("Complete the {} AdjustWindSpeed event...".format(roomID))
@@ -254,7 +251,7 @@ class DeviceHandler:
             Device.update(isAskAir=False).where(Device.roomID == roomID)
         )
 
-        await DBManager.create(ReachTem, roomID=roomID, timePoint=currentTime)
+        await DBManager.execute(ReachTem.insert(roomID=roomID, timePoint=currentTime).on_conflict_replace())
 
         logging.info("Complete the {} SuspendWindSupply event...".format(roomID))
         return
