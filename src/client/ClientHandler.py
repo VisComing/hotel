@@ -60,9 +60,9 @@ class ClientHandler:
         maxSupplyNum = result[0].maxNumOfClientsToServe
         electricityPrice = result[0].electricityPrice
         rateing = {
-            "low": result[0].lowRate * electricityPrice,
-            "mid": result[0].midRate * electricityPrice,
-            "high": result[0].highRate * electricityPrice,
+            "low": result[0].lowRate * electricityPrice / 60,
+            "mid": result[0].midRate * electricityPrice / 60,
+            "high": result[0].highRate * electricityPrice / 60,
         }
 
         # 开始循环
@@ -205,7 +205,7 @@ async def createUsageRecord(roomID, theWindSpeed, billingRate, theCost, theSuppl
             endTime=currentTime,
             windSpeed=theWindSpeed,
             cost=theCost,
-            billingRate=theSupplyTime,
+            billingRate=billingRate,
         )
     # 存在使用记录，更新endTime
     else:
@@ -227,7 +227,7 @@ async def createUsageRecord(roomID, theWindSpeed, billingRate, theCost, theSuppl
                 endTime=currentTime,
                 windSpeed=theWindSpeed,
                 cost=theCost,
-                billingRate=theSupplyTime,
+                billingRate=billingRate,
             )
 
 
