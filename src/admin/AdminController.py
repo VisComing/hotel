@@ -60,9 +60,9 @@ class AdminController:
                 logging.warning(e)
 
         # 并行执行接受消息函数，设置定时发送消息的handler
-        await recvMessage()
-        # tasks = [recvMessage(), self._roomStateUpdateHandler.run(websocket)]
-        # await asyncio.wait(tasks)
+        # await recvMessage()
+        tasks = [recvMessage(), self._roomStateUpdateHandler.run(websocket)]
+        await asyncio.wait(tasks)
 
     def setOrderHandler(self, handler: OrderHandler) -> None:
         """
