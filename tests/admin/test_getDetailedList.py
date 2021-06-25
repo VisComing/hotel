@@ -36,8 +36,8 @@ async def test_getDetailedList():
     )
 
     test = {
-        "startTime": int(time.mktime(datetime(2021, 6, 19, 1, 0).timetuple())),
-        "endTime": int(time.mktime(datetime(2021, 6, 19, 2, 0).timetuple())),
+        "startTime": round(time.mktime(datetime(2021, 6, 19, 1, 0).timetuple())),
+        "endTime": round(time.mktime(datetime(2021, 6, 19, 2, 0).timetuple())),
         "windSpeed": "low",
         "billingRate": 0.5,
     }

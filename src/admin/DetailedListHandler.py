@@ -57,8 +57,8 @@ class DetailedListHandler:
             elif items.windSpeed == 3:
                 windSpeed = "high"
             item = {
-                "startTime": int(time.mktime(items.startTime.timetuple())),
-                "endTime": int(time.mktime(items.endtime.timetuple())),
+                "startTime": round(time.mktime(items.startTime.timetuple())),
+                "endTime": round(time.mktime(items.endtime.timetuple())),
                 "windSpeed": windSpeed,
                 "billingRate": items.billingRate,
             }
