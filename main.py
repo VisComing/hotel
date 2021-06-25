@@ -41,7 +41,7 @@ class MainController:
         self.adminController.setSysconfigHandler(SysConfigHandler())
         self.adminController.setRoomStateUpdateHandler(RoomStateUpdateHandler())
         self.adminController.setPaymentHandler(PaymentHandler())
-        
+
         self.clientController.setDeviceHandler(DeviceHandler())
         self.clientController.setClientHandler(ClientHandler())
         try:
@@ -50,9 +50,7 @@ class MainController:
             logging.warn(e)
         self.initAllRooms()
 
-        settings = DBManager.execute(Settings.select())
-        if len(settings) == 0:
-            self.initSettings()
+        self.initSettings()
 
     async def run(self) -> None:
         """
@@ -103,6 +101,8 @@ class MainController:
         """
         initSettings 在第一次建立数据库时需要初始化系统设置
         """
+        if len(Settings.select()) != 0:
+            return
         Settings.create(
             temperatureControlMode="heating",
             minHeatTemperature=18,
