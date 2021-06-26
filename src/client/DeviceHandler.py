@@ -64,7 +64,9 @@ class DeviceHandler:
             )
 
         await DBManager.execute(
-            Power.insert(roomID=roomID, startTime=currentTime, powerState=True).on_conflict_replace()
+            Power.insert(
+                roomID=roomID, startTime=currentTime, powerState=True
+            ).on_conflict_replace()
         )
 
         logging.info("Complete the {} poweron event...".format(roomID))
@@ -95,17 +97,17 @@ class DeviceHandler:
         )
         if info_1:
             sTime = await DBManager.get(
-                    TargetTem.select()
-                    .where(TargetTem.roomID == roomID)
-                    .order_by(TargetTem.startTime.desc())
-                )
+                TargetTem.select()
+                .where(TargetTem.roomID == roomID)
+                .order_by(TargetTem.startTime.desc())
+            )
             await DBManager.execute(
                 TargetTem.update(endTime=currentTime).where(
                     TargetTem.roomID == roomID
                     and TargetTem.startTime == sTime.startTime
                 )
             )
-        
+
         sTime = await DBManager.get(
             Power.select()
             .where(Power.roomID == roomID)
@@ -118,10 +120,10 @@ class DeviceHandler:
         )
         if info_2:
             sTime = await DBManager.get(
-                    WindSpeed.select()
-                    .where(WindSpeed.roomID == roomID)
-                    .order_by(WindSpeed.startTime.desc())
-                )
+                WindSpeed.select()
+                .where(WindSpeed.roomID == roomID)
+                .order_by(WindSpeed.startTime.desc())
+            )
             await DBManager.execute(
                 WindSpeed.update(endTime=currentTime).where(
                     WindSpeed.roomID == roomID
@@ -170,7 +172,9 @@ class DeviceHandler:
                 )
             )
         await DBManager.execute(
-            TargetTem.insert(roomID=roomID, startTime=currentTime, targetTem=targetTemperature).on_conflict_replace() 
+            TargetTem.insert(
+                roomID=roomID, startTime=currentTime, targetTem=targetTemperature
+            ).on_conflict_replace()
         )
 
         logging.info("Complete the {} AdjustTargetTemperature info...".format(roomID))
@@ -211,7 +215,9 @@ class DeviceHandler:
                 )
             )
         await DBManager.execute(
-            WindSpeed.insert(roomID=roomID, startTime=currentTime, windSpeed=windDict[windSpeed]).on_conflict_replace(),
+            WindSpeed.insert(
+                roomID=roomID, startTime=currentTime, windSpeed=windDict[windSpeed]
+            ).on_conflict_replace(),
         )
 
         logging.info("Complete the {} AdjustWindSpeed event...".format(roomID))
@@ -251,7 +257,9 @@ class DeviceHandler:
             Device.update(isAskAir=False).where(Device.roomID == roomID)
         )
 
-        await DBManager.execute(ReachTem.insert(roomID=roomID, timePoint=currentTime).on_conflict_replace())
+        await DBManager.execute(
+            ReachTem.insert(roomID=roomID, timePoint=currentTime).on_conflict_replace()
+        )
 
         logging.info("Complete the {} SuspendWindSupply event...".format(roomID))
         return
@@ -286,13 +294,19 @@ class DeviceHandler:
             系统默认配置信息
         """
         # 查settings表
-        settings_info  = await DBManager.get(Settings.select())
+        settings_info = await DBManager.get(Settings.select())
         # 返回给客户端
         return {
             "temperatureControlMode": settings_info.temperatureControlMode,
             "targetTemperatureRange": {
-                "heating": {"min": settings_info.minHeatTemperature, "max": settings_info.maxHeatTemperature},
-                "cooling": {"min": settings_info.minCoolTemperature, "max": settings_info.maxCoolTemperature},
+                "heating": {
+                    "min": settings_info.minHeatTemperature,
+                    "max": settings_info.maxHeatTemperature,
+                },
+                "cooling": {
+                    "min": settings_info.minCoolTemperature,
+                    "max": settings_info.maxCoolTemperature,
+                },
             },
             "defaultTemperature": settings_info.defaultTemperature,
         }
