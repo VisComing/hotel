@@ -93,4 +93,4 @@ class SchedulerManager:
 
         self.lastStates = statesAfterScheuling
 
-        return (lastStates, statesAfterScheuling)
+        return (lastStates, statesReadyForScheuling, statesAfterScheuling)

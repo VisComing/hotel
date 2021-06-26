@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Dict, List, Mapping, Sequence, Tuple
 
 from src.client.scheduling.State import *
+from src.settings import devConfig
 
 from abc import abstractmethod, ABC
 
@@ -13,6 +14,11 @@ class SchedulerInterface(ABC):
 
 
 class Scheduler(SchedulerInterface):
+    maxNumOfClientsToServe: int
+
+    def __init__(self, *, maxNumOfClientsToServe: int = 3):
+        self.maxNumOfClientsToServe = maxNumOfClientsToServe
+
     def replace(
         self, *, servings: Sequence[ServingState], waitings: Sequence[WaitingState]
     ) -> Tuple[Sequence[ServingState], Sequence[WaitingState]]:
@@ -22,7 +28,7 @@ class Scheduler(SchedulerInterface):
         toWaitings: List[ServingState] = []
         toServings: List[WaitingState] = []
 
-        for _ in range(0, 3 - len(servingQueue)):
+        for _ in range(0, self.maxNumOfClientsToServe - len(servingQueue)):
             if waitingQueue:
                 toServings.append(waitingQueue.pop(0))
             else:
@@ -36,7 +42,11 @@ class Scheduler(SchedulerInterface):
                 if top.windSpeed < new.windSpeed:
                     toServings.append(new)
                     toWaitings.append(top)
-                elif top.windSpeed == new.windSpeed and top.servingTime >= 3:
+                elif (
+                    top.windSpeed == new.windSpeed
+                    and top.servingTime
+                    >= devConfig.minServingTime / devConfig.timeScaleFactor
+                ):
                     toServings.append(new)
                     toWaitings.append(top)
                 else:
