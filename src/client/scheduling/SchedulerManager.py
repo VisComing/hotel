@@ -44,19 +44,6 @@ class SchedulerManager:
             for action in actions.get(key, ()):
                 newState = reducer(state=newState, action=action)
 
-            if state.state == "serving" and newState.state == "serving":
-                newState = ServingState(
-                    roomID=newState.roomID,
-                    windSpeed=newState.windSpeed,
-                    servingTime=newState.servingTime + 1,
-                )
-            elif state.state == "waiting" and newState.state == "waiting":
-                newState = WaitingState(
-                    roomID=newState.roomID,
-                    windSpeed=newState.windSpeed,
-                    waitingTime=newState.waitingTime + 1,
-                )
-
             states[key] = newState
 
         return states
