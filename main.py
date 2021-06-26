@@ -19,6 +19,8 @@ import peewee
 
 # 配置logging
 logging.basicConfig(
+    filename='log.log',
+    filemode='a',
     format="%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.INFO,
