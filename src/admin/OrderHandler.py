@@ -147,7 +147,7 @@ class OrderHandler:
                 orderID=record.orderID.orderID,
                 detailListID=str(uuid.uuid1()),
                 startTime=record.startTime,
-                endTime=record.endTime,
+                endtime=record.endTime,
                 WindSpeed=record.windSpeed,
                 cost=record.cost,
                 billingRate=record.billingRate,
