@@ -66,9 +66,10 @@ class ClientHandler:
             else:
                 self.manager.dispatchAction(roomID=roomID, action=SuspendAction())
 
-            self.manager.dispatchAction(
-                roomID=roomID, action=AdjustWindSpeedAction(windSpeed=device.windSpeed)
-            )
+            if device.windSpeed:
+                self.manager.dispatchAction(
+                    roomID=roomID, action=AdjustWindSpeedAction(windSpeed=device.windSpeed)
+                )
 
     async def updateAndSendWindSupplyState(
         self, lastStates: Mapping[str, State], newStates: Mapping[str, State]
