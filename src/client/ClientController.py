@@ -34,24 +34,14 @@ class ClientController:
                 ):
                     params = json.loads(message)["params"]
                     roomID = params["roomID"]
-                    tasks = [
-                        self._ClientHandler.addRoom(roomID, websocket),
-                        self._DeviceHandler.run(message, websocket),
-                    ]
-                    await asyncio.wait(tasks)
-
-                #    await self._DeviceHandler.run(message, websocket)
-                # elif method == ""
+                    self._ClientHandler.addConnection(roomID, websocket)
+                    await self._DeviceHandler.run(message, websocket)
                 else:
                     logging.error("ClientController: rpc failed, no related function")
-
-            tasks = [self._ClientHandler.deleteRoomByID(roomID)]  # 删除房间与连接对应关系
-            await asyncio.wait(tasks)
-
-        except websockets.exceptions.ConnectionClosedError as e:
+            self._ClientHandler.removeConnectionByID(roomID)
+        except websockets.exceptions.ConnectionClosed as e:
             logging.warning(e)
-            tasks = [self._ClientHandler.deleteRoomByWeb(websocket)]  # 删除房间与连接对应关系
-            await asyncio.wait(tasks)
+            self._ClientHandler.removeConnectionBySocket(roomID)
 
     def setDeviceHandler(self, handler: DeviceHandler) -> None:
         """

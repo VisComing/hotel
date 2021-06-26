@@ -19,8 +19,8 @@ import peewee
 
 # 配置logging
 logging.basicConfig(
-    filename='log.log',
-    filemode='a',
+    filename="log.log",
+    filemode="a",
     format="%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     level=logging.INFO,
@@ -32,6 +32,10 @@ class MainController:
         """
         __init__ MainCOntroller构造函数，将各种handler注入到controller中
         """
+        self.createTables()
+        self.initAllRooms()
+        self.initSettings()
+
         self.clientController = ClientController()
         self.adminController = AdminController()
         # 依赖注入
@@ -46,13 +50,6 @@ class MainController:
 
         self.clientController.setDeviceHandler(DeviceHandler())
         self.clientController.setClientHandler(ClientHandler())
-        try:
-            self.createTables()
-        except Exception as e:
-            logging.warn(e)
-        self.initAllRooms()
-
-        self.initSettings()
 
     async def run(self) -> None:
         """
