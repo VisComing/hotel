@@ -113,10 +113,20 @@ class ClientHandler:
                 )
 
     async def updateAndSendBillingInformation(self, lastStates: Mapping[str, State]):
+        conf = await DBManager.get(Settings.select())
+
+        rateDict = {
+            1: conf.lowRate,
+            2: conf.midRate,
+            3: conf.highRate
+        }
+
+        price = conf.electricityPrice
+
         for roomID, state in lastStates.items():
             billingRate = 0
             if state.state == "serving":
-                billingRate = state.windSpeed * 1 / 60
+                billingRate = rateDict[state.windSpeed] * price / 60
 
             device = await DBManager.get(Device.select().where(Device.roomID == roomID))
             totalCost = device.cost + billingRate * 1
