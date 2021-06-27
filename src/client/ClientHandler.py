@@ -29,7 +29,10 @@ class ClientHandler:
         self.sockets = {}
 
         rooms = map(lambda it: it.roomID, Device.select())
-        self.manager = SchedulerManager(scheduler=Scheduler(), rooms=rooms)
+
+        maxNumOfClientsToServe = Settings.select().get().maxNumOfClientsToServe
+        scheduler = Scheduler(maxNumOfClientsToServe=maxNumOfClientsToServe)
+        self.manager = SchedulerManager(scheduler=scheduler, rooms=rooms)
 
     def addConnection(self, roomID: str, socket: WebSocketCommonProtocol):
         if roomID in self.sockets:
@@ -135,6 +138,19 @@ class ClientHandler:
                 )
             )
 
+    async def updateScheduleRecord(
+        self,
+        statesReadyForScheuling: Mapping[str, State],
+        newStates: Mapping[str, State],
+    ):
+        now = datetime.now()
+
+        for roomID, stateBefore in statesReadyForScheuling.items():
+            stateAfter = newStates[roomID]
+
+            if stateBefore.state == "serving" and stateAfter.state == "waiting":
+                await DBManager.execute(Scheduling.insert(roomID=roomID, timePoint=now))
+
     async def updateUsageRecord(self, lastStates: Mapping[str, State]):
         now = datetime.now()
 
@@ -216,11 +232,12 @@ class ClientHandler:
             baseTime = datetime.now()
 
             await self.dispatchActionsByDeviceStates()
-            (lastStates, newStates) = self.manager.tick()
+            (lastStates, statesReadyForScheuling, newStates) = self.manager.tick()
 
             await self.updateAndSendBillingInformation(lastStates)
             await self.updateAndSendWindSupplyState(lastStates, newStates)
             await self.updateUsageRecord(lastStates)
+            await self.updateScheduleRecord(statesReadyForScheuling, newStates)
 
             delta = (datetime.now() - baseTime).total_seconds()
             await asyncio.sleep(1 - delta)

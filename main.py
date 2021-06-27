@@ -79,17 +79,7 @@ class MainController:
         initAllRooms 在tbDevice表中创建所有的RoomID
         """
 
-        roomIDList = [
-            "01-01-01",
-            "01-01-02",
-            "01-01-03",
-            "01-02-01",
-            "01-02-02",
-            "01-02-03",
-            "01-03-01",
-            "01-03-02",
-            "01-03-03",
-        ]
+        roomIDList = ["01-01-01", "01-01-02", "01-01-03", "01-01-04"]
         for roomID in roomIDList:
             try:
                 Device.create(roomID=roomID)

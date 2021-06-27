@@ -40,3 +40,14 @@ class AdminErrorCode(BaseSettings):
 
 
 adminErrorCode = AdminErrorCode()
+
+
+class DevConfig(BaseSettings):
+    # 调度时，最少的服务时间片
+    minServingTime: int = 120
+
+    # 时间缩放倍数
+    timeScaleFactor: int = 1
+
+
+devConfig = DevConfig()
