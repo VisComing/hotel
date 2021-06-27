@@ -6,6 +6,8 @@ import asyncio
 from src.settings import websocketsConfig
 from src.client.DeviceHandler import DeviceHandler
 from src.client.ClientHandler import ClientHandler
+from src.model.Order import Order
+from src.model import DBManager
 
 
 class ClientController:
@@ -34,6 +36,18 @@ class ClientController:
                 ):
                     params = json.loads(message)["params"]
                     roomID = params["roomID"]
+
+                    orders = list(
+                        await DBManager.execute(
+                            Order.select().where(
+                                (Order.roomID == roomID) & (Order.state == "using")
+                            )
+                        )
+                    )
+                    if not orders:
+                        await websocket.close()
+                        return
+
                     self._ClientHandler.addConnection(roomID, websocket)
                     await self._DeviceHandler.run(message, websocket)
                 else:
