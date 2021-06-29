@@ -49,6 +49,6 @@ jobs:
       with:
         host: "101.200.186.158"
         username: "ruifa"
-        password: "zhouruifa"
+        password: "**********"
         port: 22
         script: bash run.sh
