@@ -128,7 +128,7 @@ asyncio.get_event_loop().run_until_complete(main())
 - client端口：18001
 
 ## 代码覆盖率
-- cov.zhouruifa.top
+- https://cov.zhouruifa.top
 - 可以查看你写的代码哪个部分被测试覆盖到了，哪个部分没有覆盖到
 - 目前覆盖率功能还不完善，只有全量覆盖率，并且只计算了master分支的代码
 - 目前还没有配置增量覆盖率
