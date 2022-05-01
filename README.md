@@ -1,3 +1,4 @@
+[![Python application](https://github.com/VisComing/hotel/actions/workflows/python-hotel.yml/badge.svg?branch=master)](https://github.com/VisComing/hotel/actions/workflows/python-hotel.yml)
 # 分布式温控系统
 ## 系统环境
 - ubuntu 18.04
